@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 import environ
 
@@ -30,6 +30,14 @@ SECRET_KEY = "django-insecure-*#+#1rs=xsd3w2xiha3$-ha4nkps*rnd4fj^)kef8@$&+fmbct
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+if 'RAILWAY_PUBLIC_DOMAIN' in os.environ:
+    ALLOWED_HOSTS.append(os.environ['RAILWAY_PUBLIC_DOMAIN'])
+else:
+    ALLOWED_HOSTS.append("danso-api.thnos.app")
+    ALLOWED_HOSTS.append("localhost")
+    ALLOWED_HOSTS.append("127.0.0.1")
+    ALLOWED_HOSTS.append("[::1]")
 
 
 # Application definition
