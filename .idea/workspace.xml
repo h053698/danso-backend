@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Update dependencies to use `psycopg2-binary` instead of `psycopg2` for improved compatibility and ease of installation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -106,7 +106,7 @@
       <workItem from="1749445935312" duration="4467000" />
       <workItem from="1749610407039" duration="3479000" />
       <workItem from="1749626763508" duration="600000" />
-      <workItem from="1749685578008" duration="3541000" />
+      <workItem from="1749685578008" duration="4211000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -116,7 +116,23 @@
       <option name="project" value="LOCAL" />
       <updated>1749689843710</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add Dockerfile for containerized application setup and update IntelliJ workspace configuration">
+      <option name="closed" value="true" />
+      <created>1749690012554</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1749690012554</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Update dependencies to use `psycopg2-binary` instead of `psycopg2` for improved compatibility and ease of installation">
+      <option name="closed" value="true" />
+      <created>1749690158504</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1749690158504</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -124,6 +140,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies." />
-    <option name="LAST_COMMIT_MESSAGE" value="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies." />
+    <MESSAGE value="Add Dockerfile for containerized application setup and update IntelliJ workspace configuration" />
+    <MESSAGE value="Update dependencies to use `psycopg2-binary` instead of `psycopg2` for improved compatibility and ease of installation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update dependencies to use `psycopg2-binary` instead of `psycopg2` for improved compatibility and ease of installation" />
   </component>
 </project>
