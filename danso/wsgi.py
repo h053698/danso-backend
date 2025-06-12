@@ -12,5 +12,7 @@ import os
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "danso.settings")
+os.environ.setdefault("RAILPACK_DJANGO_APP_NAME", "danso")
+os.environ.setdefault("RAILPACK_PYTHON_VERSION", "3.12")
 
 application = get_wsgi_application()

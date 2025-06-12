@@ -14,3 +14,6 @@ dependencies = [
 dev = [
     "black>=25.1.0",
 ]
+prod = [
+    "gunicorn>=23.0.0",
+]

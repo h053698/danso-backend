@@ -19,7 +19,7 @@ RUN pip install uv
 WORKDIR /app
 COPY pyproject.toml uv.lock /app/
 
-RUN uv sync --no-dev
+RUN uv sync --no-dev --extra prod
 
 FROM python:3.12.2-slim-bookworm
 
