@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`.">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Update `ALLOWED_HOSTS` configuration to include `.traefik.me` and standardize host entries.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/danso/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,7 +145,7 @@
       <workItem from="1749795741483" duration="2049000" />
       <workItem from="1749832500363" duration="1837000" />
       <workItem from="1750005559220" duration="2296000" />
-      <workItem from="1750041054140" duration="3070000" />
+      <workItem from="1750041054140" duration="3212000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -219,7 +219,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750043869459</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Update `ALLOWED_HOSTS` configuration to include `.traefik.me` and standardize host entries.">
+      <option name="closed" value="true" />
+      <created>1750044141846</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1750044141846</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -235,6 +243,7 @@
     <MESSAGE value="Update Dockerfile to optimize layer usage, add `uvicorn` dependencies for ASGI support, and configure production-ready server setup" />
     <MESSAGE value="Expose port `8000` in Dockerfile and configure `gunicorn` with `uvicorn` worker for ASGI support." />
     <MESSAGE value="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`." />
+    <MESSAGE value="Update `ALLOWED_HOSTS` configuration to include `.traefik.me` and standardize host entries." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update `ALLOWED_HOSTS` configuration to include `.traefik.me` and standardize host entries." />
   </component>
 </project>

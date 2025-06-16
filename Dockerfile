@@ -20,4 +20,5 @@ ENV PATH="/app/.venv/bin:$PATH"
 RUN uv sync --no-dev
 
 EXPOSE 8000
+RUN uv run manage.py collectstatic --noinput
 CMD ["uv", "run", "gunicorn", "danso.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
