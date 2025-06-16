@@ -29,16 +29,7 @@ SECRET_KEY = "django-insecure-*#+#1rs=xsd3w2xiha3$-ha4nkps*rnd4fj^)kef8@$&+fmbct
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ["DEBUG"].lower() == "true"
 
-ALLOWED_HOSTS = []
-
-if 'RAILWAY_PUBLIC_DOMAIN' in os.environ:
-    ALLOWED_HOSTS.append(os.environ['RAILWAY_PUBLIC_DOMAIN'])
-else:
-    ALLOWED_HOSTS.append("danso-api.thnos.app")
-    ALLOWED_HOSTS.append("localhost")
-    ALLOWED_HOSTS.append("127.0.0.1")
-    ALLOWED_HOSTS.append("[::1]")
-
+ALLOWED_HOSTS = ["danso-api.thnos.app", ".traefik.me", "localhost", "127.0.0.1", "[::1]"]
 
 # Application definition
 
@@ -61,6 +52,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "danso.urls"
@@ -132,7 +124,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = '/static/'  # 반드시 앞뒤로 슬래시(/)를 포함해야 합니다
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Update Dockerfile to optimize layer usage, add `uvicorn` dependencies for ASGI support, and configure production-ready server setup">
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/danso/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,7 +145,7 @@
       <workItem from="1749795741483" duration="2049000" />
       <workItem from="1749832500363" duration="1837000" />
       <workItem from="1750005559220" duration="2296000" />
-      <workItem from="1750041054140" duration="1942000" />
+      <workItem from="1750041054140" duration="3070000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -202,7 +203,23 @@
       <option name="project" value="LOCAL" />
       <updated>1750042924471</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Expose port `8000` in Dockerfile and configure `gunicorn` with `uvicorn` worker for ASGI support.">
+      <option name="closed" value="true" />
+      <created>1750043006663</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1750043006663</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`.">
+      <option name="closed" value="true" />
+      <created>1750043869459</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1750043869459</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -216,6 +233,8 @@
     <MESSAGE value="Add `gunicorn` dependency for production and update configurations" />
     <MESSAGE value="Add `gunicorn` to general dependencies and configure `ALLOWED_HOSTS` for production" />
     <MESSAGE value="Update Dockerfile to optimize layer usage, add `uvicorn` dependencies for ASGI support, and configure production-ready server setup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update Dockerfile to optimize layer usage, add `uvicorn` dependencies for ASGI support, and configure production-ready server setup" />
+    <MESSAGE value="Expose port `8000` in Dockerfile and configure `gunicorn` with `uvicorn` worker for ASGI support." />
+    <MESSAGE value="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`." />
   </component>
 </project>
