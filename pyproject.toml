@@ -9,10 +9,11 @@ dependencies = [
     "djangorestframework>=3.16.0",
     "gunicorn>=23.0.0",
     "psycopg2-binary>=2.9.10",
+    "uvicorn>=0.34.3",
+    "uvicorn-worker>=0.3.0",
 ]
 
 [dependency-groups]
 dev = [
     "black>=25.1.0",
 ]
-prod = []
