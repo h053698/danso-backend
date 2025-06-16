@@ -67,6 +67,9 @@ db.sqlite3-journal
 # Intellij IDEA
 .idea
 
+# Django Whitenoise Static Files
+staticfiles/
+
 # Flask stuff:
 instance/
 .webassets-cache
