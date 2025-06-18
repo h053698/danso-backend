@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`.">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Add `level` field to `SentencePack`, implement new async views for `sentence` app, and refactor `user` authentication flow.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/danso/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/danso/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +17,14 @@
   </component>
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -42,6 +52,8 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;Django Server.danso-backend.executor&quot;: &quot;ConcurrencyExecutor&quot;,
     &quot;Docker.Dockerfile builder.executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
@@ -50,7 +62,8 @@
     &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR_AND_PREVIEW&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;#5 on main&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/yuchan/dev/sunrin/danso-backend&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -145,7 +158,13 @@
       <workItem from="1749795741483" duration="2049000" />
       <workItem from="1749832500363" duration="1837000" />
       <workItem from="1750005559220" duration="2296000" />
-      <workItem from="1750041054140" duration="3070000" />
+      <workItem from="1750041054140" duration="5882000" />
+      <workItem from="1750048590939" duration="7587000" />
+      <workItem from="1750200095161" duration="1138000" />
+      <workItem from="1750202895371" duration="6198000" />
+      <workItem from="1750218232734" duration="595000" />
+      <workItem from="1750228568663" duration="5069000" />
+      <workItem from="1750274593557" duration="712000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -219,11 +238,54 @@
       <option name="project" value="LOCAL" />
       <updated>1750043869459</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Update `ALLOWED_HOSTS` configuration to include `.traefik.me` and standardize host entries.">
+      <option name="closed" value="true" />
+      <created>1750044141846</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1750044141846</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Update Dockerfile to run `collectstatic` during build and refine production server setup.">
+      <option name="closed" value="true" />
+      <created>1750044280802</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1750044280802</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Remove `leaderboard` app and implement `user` and `sentence` apps with enhanced models, views, templates, and migrations.">
+      <option name="closed" value="true" />
+      <created>1750214241981</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1750214241981</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Add `level` field to `SentencePack`, implement new async views for `sentence` app, and refactor `user` authentication flow.">
+      <option name="closed" value="true" />
+      <created>1750274910523</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1750274910523</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies." />
@@ -235,6 +297,10 @@
     <MESSAGE value="Update Dockerfile to optimize layer usage, add `uvicorn` dependencies for ASGI support, and configure production-ready server setup" />
     <MESSAGE value="Expose port `8000` in Dockerfile and configure `gunicorn` with `uvicorn` worker for ASGI support." />
     <MESSAGE value="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`." />
+    <MESSAGE value="Update `ALLOWED_HOSTS` configuration to include `.traefik.me` and standardize host entries." />
+    <MESSAGE value="Update Dockerfile to run `collectstatic` during build and refine production server setup." />
+    <MESSAGE value="Remove `leaderboard` app and implement `user` and `sentence` apps with enhanced models, views, templates, and migrations." />
+    <MESSAGE value="Add `level` field to `SentencePack`, implement new async views for `sentence` app, and refactor `user` authentication flow." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add `level` field to `SentencePack`, implement new async views for `sentence` app, and refactor `user` authentication flow." />
   </component>
 </project>
