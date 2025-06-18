@@ -4,9 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Update `ALLOWED_HOSTS` configuration to include `.traefik.me` and standardize host entries.">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Update Dockerfile to run `collectstatic` during build and refine production server setup.">
+      <change afterPath="$PROJECT_DIR$/user/login_code_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/danso/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/danso/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/leaderboard/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/leaderboard/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/leaderboard/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/leaderboard/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/leaderboard/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/leaderboard/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/leaderboard/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +29,13 @@
   </component>
   <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -40,28 +61,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Django Server.danso-backend.executor&quot;: &quot;ConcurrencyExecutor&quot;,
-    &quot;Docker.Dockerfile builder.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;Database connection parameters found&quot;,
-    &quot;Notification.DoNotAsk-DatabaseConfigFileWatcher.found&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/yuchan/dev/sunrin/danso-backend&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.toDoOptions&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Django Server.danso-backend.executor": "ConcurrencyExecutor",
+    "Docker.Dockerfile builder.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found": "Database connection parameters found",
+    "Notification.DoNotAsk-DatabaseConfigFileWatcher.found": "true",
+    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "#5 on main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/Users/yuchan/dev/sunrin/danso-backend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.toDoOptions",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -145,7 +167,10 @@
       <workItem from="1749795741483" duration="2049000" />
       <workItem from="1749832500363" duration="1837000" />
       <workItem from="1750005559220" duration="2296000" />
-      <workItem from="1750041054140" duration="3212000" />
+      <workItem from="1750041054140" duration="5882000" />
+      <workItem from="1750048590939" duration="7587000" />
+      <workItem from="1750200095161" duration="1138000" />
+      <workItem from="1750202895371" duration="3947000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -227,7 +252,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750044141846</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Update Dockerfile to run `collectstatic` during build and refine production server setup.">
+      <option name="closed" value="true" />
+      <created>1750044280802</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1750044280802</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -244,6 +277,7 @@
     <MESSAGE value="Expose port `8000` in Dockerfile and configure `gunicorn` with `uvicorn` worker for ASGI support." />
     <MESSAGE value="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`." />
     <MESSAGE value="Update `ALLOWED_HOSTS` configuration to include `.traefik.me` and standardize host entries." />
-    <option name="LAST_COMMIT_MESSAGE" value="Update `ALLOWED_HOSTS` configuration to include `.traefik.me` and standardize host entries." />
+    <MESSAGE value="Update Dockerfile to run `collectstatic` during build and refine production server setup." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update Dockerfile to run `collectstatic` during build and refine production server setup." />
   </component>
 </project>

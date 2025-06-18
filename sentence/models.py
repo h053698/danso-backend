@@ -1,3 +1,34 @@
 from django.db import models
+from user.models import GameUser  # User 모델 import
 
-# Create your models here.
+
+class SentencePack(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    original_author = models.CharField(
+        max_length=255, blank=True, null=True
+    )  # 원작자 이름
+    author = models.ForeignKey(
+        GameUser, on_delete=models.CASCADE, related_name="sentences"
+    )
+    sentences = models.TextField()
+
+    def __str__(self):
+        return f"SentencePack(id={self.id}, name={self.name}, author={self.author.nickname if self.author else 'Unknown'})"
+
+
+class SentenceLeaderboard(models.Model):
+    id = models.AutoField(primary_key=True)
+    sentence_pack = models.ForeignKey(
+        SentencePack, on_delete=models.CASCADE, related_name="leaderboards"
+    )
+    player = models.ForeignKey(
+        GameUser, on_delete=models.CASCADE, related_name="game_scores"
+    )
+    total_score = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ("sentence_pack", "player")
+
+    def __str__(self):
+        return f"Leaderboard: {self.sentence_pack.name} - {self.player.nickname}: {self.total_score}점"

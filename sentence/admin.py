@@ -1,3 +1,5 @@
 from django.contrib import admin
+from sentence.models import SentencePack, SentenceLeaderboard
 
-# Register your models here.
+admin.site.register(SentencePack)
+admin.site.register(SentenceLeaderboard)

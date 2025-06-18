@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 완료</title>
+    <script>
+        function toggleLoginCode() {
+            const codeBox = document.getElementById('login-code-box');
+            codeBox.classList.toggle('hidden');
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md text-center">
+        <h1 class="text-2xl font-bold mb-4 text-green-600">로그인이 완료되었습니다</h1>
+        <p class="text-gray-600 mb-6">이 창을 닫아도 됩니다.</p>
+
+        <p class="text-sm text-gray-500 cursor-pointer underline" onclick="toggleLoginCode()">
+            로그인이 자동으로 진행되지 않았나요?
+        </p>
+
+        <div id="login-code-box" class="hidden mt-4 bg-gray-100 border border-gray-300 p-3 rounded text-sm text-gray-800">
+            로그인 코드: <span class="font-mono font-semibold">{{ login_code }}</span>
+        </div>
+    </div>
+</body>
+</html>

@@ -17,12 +17,23 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from leaderboard.views import leaderboard_view
-from sentence.views import sentences, sentence_detail
+from sentence.views import get_sentences, get_sentence_by_id, get_sentence_game
+from user.views import (
+    login_oauth_url,
+    login_oauth_callback,
+    login_view_render,
+    user_info,
+    user_logout,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("leaderboard/", leaderboard_view),
-    path("sentences/", sentences, name="sentences"),
-    path("sentences/<int:sentence_id>/", sentence_detail, name="sentence_detail"),
+    path("sentences/", get_sentences, name="sentences"),
+    path("sentences/<int:sentence_id>/", get_sentence_by_id, name="sentence-detail"),
+    path("sentences/<int:sentence_id>/game/", get_sentence_game, name="sentence-game"),
+    path("login/oauth/", login_oauth_url, name="login-oauth-url"),
+    path("login/callback", login_oauth_callback, name="login-oauth-callback"),
+    path("login/result", login_view_render, name="login-result"),
+    path("user/me", user_info, name="login-view"),
+    path("user/logout", user_logout, name="user-logout"),
 ]

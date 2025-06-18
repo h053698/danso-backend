@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+
 import os
 from pathlib import Path
 import environ
@@ -29,7 +30,13 @@ SECRET_KEY = "django-insecure-*#+#1rs=xsd3w2xiha3$-ha4nkps*rnd4fj^)kef8@$&+fmbct
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ["DEBUG"].lower() == "true"
 
-ALLOWED_HOSTS = ["danso-api.thnos.app", ".traefik.me", "localhost", "127.0.0.1", "[::1]"]
+ALLOWED_HOSTS = [
+    "danso-api.thnos.app",
+    ".traefik.me",
+    "localhost",
+    "127.0.0.1",
+    "[::1]",
+]
 
 # Application definition
 
@@ -41,7 +48,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "psycopg2",
-    "rest_framework",
+    "adrf",
+    "user.apps.UserConfig",
+    "sentence.apps.SentenceConfig",
 ]
 
 MIDDLEWARE = [
@@ -124,10 +133,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/static/'  # 반드시 앞뒤로 슬래시(/)를 포함해야 합니다
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = "/static/"  # 반드시 앞뒤로 슬래시(/)를 포함해야 합니다
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# settings.py에 추가
+GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = env("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = env("GOOGLE_REDIRECT_URI")
