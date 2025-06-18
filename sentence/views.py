@@ -10,7 +10,7 @@ from user.auth import login_code_to_user
 @api_view(["GET"])
 async def get_sentence_packs(request: HttpRequest):
     get_sentences_all = sync_to_async(
-        lambda: list(SentencePack.objects.select_related('author').all())
+        lambda: list(SentencePack.objects.select_related("author").all())
     )
     sentences = await get_sentences_all()
     sentences_data = [
@@ -23,10 +23,11 @@ async def get_sentence_packs(request: HttpRequest):
     ]
     return Response(sentences_data, status=status.HTTP_200_OK)
 
+
 @api_view(["GET"])
 async def get_sentence_packs_random(request: HttpRequest):
     get_sentences_random = sync_to_async(
-        lambda: list(SentencePack.objects.select_related('author').order_by('?')[:10])
+        lambda: list(SentencePack.objects.select_related("author").order_by("?")[:10])
     )
     sentences = await get_sentences_random()
     sentences_data = [
@@ -38,6 +39,7 @@ async def get_sentence_packs_random(request: HttpRequest):
         for sentence in sentences
     ]
     return Response(sentences_data, status=status.HTTP_200_OK)
+
 
 @api_view(["GET"])
 async def search_sentence_pack(request: HttpRequest):
@@ -60,12 +62,13 @@ async def search_sentence_pack(request: HttpRequest):
     )
 
 
-
-
-
 async def get_leaderboard_data(sentence_pack: SentencePack):
     get_all_leaderboards = sync_to_async(
-        lambda: list(sentence_pack.leaderboards.all().select_related('player').order_by("-total_score"))
+        lambda: list(
+            sentence_pack.leaderboards.all()
+            .select_related("player")
+            .order_by("-total_score")
+        )
     )
     all_leaderboards = await get_all_leaderboards()
     top_5 = list(all_leaderboards[:5])
@@ -83,7 +86,7 @@ async def get_sentence_game(request: HttpRequest, sentence_id: int):
 
     try:
         get_sentence_pack = sync_to_async(
-            lambda: SentencePack.objects.select_related('author').get(id=sentence_id)
+            lambda: SentencePack.objects.select_related("author").get(id=sentence_id)
         )
         sentence_pack = await get_sentence_pack()
     except SentencePack.DoesNotExist:
@@ -110,7 +113,11 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
     )
 
     get_all_ranks = sync_to_async(
-        lambda: list(sentence_pack.leaderboards.order_by('-total_score').values_list('total_score', flat=True))
+        lambda: list(
+            sentence_pack.leaderboards.order_by("-total_score").values_list(
+                "total_score", flat=True
+            )
+        )
     )
 
     user_leaderboard = await get_leaderboard()
@@ -124,50 +131,97 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
         user_rank = len(all_scores) + 1
 
     get_nearby_users = sync_to_async(
-        lambda: list(sentence_pack.leaderboards.select_related('player')
-                     .order_by('-total_score')
-                     .filter(total_score__gte=user_score)[:1].union(
-            sentence_pack.leaderboards.select_related('player')
-            .order_by('-total_score')
-            .filter(total_score__lte=user_score)[:1]
-        ))
+        lambda: list(
+            sentence_pack.leaderboards.select_related("player")
+            .order_by("-total_score")
+            .filter(total_score__gte=user_score)[:1]
+            .union(
+                sentence_pack.leaderboards.select_related("player")
+                .order_by("-total_score")
+                .filter(total_score__lte=user_score)[:1]
+            )
+        )
     )
 
     nearby_users = await get_nearby_users()
 
-    nearby_user_1 = {
-        "player": "없음",
-        "score": 0,
-        "rank": user_rank - 1
-    }
+    nearby_user_1 = {"player": "없음", "score": 0, "rank": user_rank - 1}
 
-    nearby_user_2 = {
-        "player": "없음",
-        "score": 0,
-        "rank": user_rank + 1
-    }
+    nearby_user_2 = {"player": "없음", "score": 0, "rank": user_rank + 1}
 
     if len(nearby_users) > 0:
         if nearby_users[0].total_score >= user_score:
             nearby_user_1 = {
-                "player": nearby_users[0].player.nickname if nearby_users[0].player else "알 수 없음",
+                "player": (
+                    nearby_users[0].player.nickname
+                    if nearby_users[0].player
+                    else "알 수 없음"
+                ),
                 "score": nearby_users[0].total_score,
-                "rank": user_rank - 1
+                "rank": user_rank - 1,
             }
         if len(nearby_users) > 1:
             nearby_user_2 = {
-                "player": nearby_users[1].player.nickname if nearby_users[1].player else "알 수 없음",
+                "player": (
+                    nearby_users[1].player.nickname
+                    if nearby_users[1].player
+                    else "알 수 없음"
+                ),
                 "score": nearby_users[1].total_score,
-                "rank": user_rank + 1
+                "rank": user_rank + 1,
             }
 
     return {
         "my_score": user_score,
         "my_rank": user_rank,
         "my_nearest_rank_user_1": nearby_user_1,
-        "my_nearest_rank_user_2": nearby_user_2
+        "my_nearest_rank_user_2": nearby_user_2,
     }
 
+
+@api_view(["POST"])
+async def update_sentence_game_point(request: HttpRequest, sentence_id: int):
+    if not sentence_id:
+        return Response(
+            {"error": "문장 그룹 ID가 제공되지 않았습니다."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    login_code = request.headers.get("X-Login-Code", None)
+    if not login_code:
+        return Response(
+            {"error": "로그인 코드가 제공되지 않았습니다."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    user = await login_code_to_user(login_code)
+
+    try:
+        get_sentence_pack = sync_to_async(
+            lambda: SentencePack.objects.select_related("author").get(id=sentence_id)
+        )
+        sentence_pack = await get_sentence_pack()
+    except SentencePack.DoesNotExist:
+        return Response(
+            {"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND
+        )
+
+    score = request.POST.get("score", None)
+    if score is None:
+        return Response(
+            {"error": "점수가 제공되지 않았습니다."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    leaderboard, created = await sync_to_async(
+        lambda: sentence_pack.leaderboards.get_or_create(player=user)
+    )()
+
+    leaderboard.total_score += score
+    await sync_to_async(leaderboard.save)()
+
+    return Response(
+        {"message": "점수가 업데이트되었습니다."}, status=status.HTTP_200_OK
+    )
 
 
 @api_view(["GET"])
@@ -188,7 +242,7 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
 
     try:
         get_sentence_pack = sync_to_async(
-            lambda: SentencePack.objects.select_related('author').get(id=sentence_id)
+            lambda: SentencePack.objects.select_related("author").get(id=sentence_id)
         )
         sentence_pack = await get_sentence_pack()
     except SentencePack.DoesNotExist:

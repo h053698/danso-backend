@@ -13,17 +13,17 @@ class SentencePack(models.Model):
     )
     sentences = models.TextField()
     LEVEL_CHOICES = [
-        ('A', '상'),
-        ('B', '중상'),
-        ('C', '중'),
-        ('D', '중하'),
-        ('E', '하'),
+        ("A", "상"),
+        ("B", "중상"),
+        ("C", "중"),
+        ("D", "중하"),
+        ("E", "하"),
     ]
 
     level = models.CharField(max_length=1, choices=LEVEL_CHOICES)
 
     def get_level_display_korean(self):
-        return dict(self.LEVEL_CHOICES).get(self.level, '')
+        return dict(self.LEVEL_CHOICES).get(self.level, "")
 
     def __str__(self):
         return f"SentencePack(id={self.id}, name={self.name}, author={self.author.nickname if self.author else 'Unknown'})"

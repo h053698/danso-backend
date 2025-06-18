@@ -17,7 +17,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from sentence.views import get_sentence_packs, get_sentence_by_id, get_sentence_game, search_sentence_pack, get_sentence_packs_random
+from sentence.views import (
+    get_sentence_packs,
+    get_sentence_by_id,
+    get_sentence_game,
+    search_sentence_pack,
+    get_sentence_packs_random,
+    update_sentence_game_point,
+)
 from user.views import (
     login_oauth_url,
     login_oauth_callback,
@@ -25,17 +32,24 @@ from user.views import (
     user_info,
     user_logout,
 )
+from realtime.views import match_player
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("sentences/", get_sentence_packs, name="sentences"),
-    path("sentences/random/", get_sentence_packs_random, name="random-sentences"),
-    path("sentences/search/", search_sentence_pack, name="search-sentence-pack"),
-    path("sentences/<int:sentence_id>/", get_sentence_by_id, name="sentence-detail"),
-    path("sentences/<int:sentence_id>/game/", get_sentence_game, name="sentence-game"),
+    path(
+        "sentences/<int:sentence_pack_id>/set-score",
+        update_sentence_game_point,
+        name="update-sentence-game-point",
+    ),
+    path("sentences/random", get_sentence_packs_random, name="random-sentences"),
+    path("sentences/search", search_sentence_pack, name="search-sentence-pack"),
+    path("sentences/<int:sentence_id>", get_sentence_by_id, name="sentence-detail"),
+    path("sentences/<int:sentence_id>/game", get_sentence_game, name="sentence-game"),
     path("login/oauth/", login_oauth_url, name="login-oauth-url"),
     path("login/callback", login_oauth_callback, name="login-oauth-callback"),
     path("login/result", login_view_render, name="login-result"),
     path("user/me", user_info, name="login-view"),
     path("user/logout", user_logout, name="user-logout"),
+    path("realtime/match-player", match_player, name="match-player"),
 ]
