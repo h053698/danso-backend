@@ -56,8 +56,25 @@ async def search_sentence_pack(request: HttpRequest):
             lambda: SentencePack.objects.filter(name__icontains=keyword)
         )
         sentences = await get_keyword_filter()
+    elif level:
+        get_level_filter = sync_to_async(
+            lambda: SentencePack.objects.filter(level=level)
+        )
+        sentences = await get_level_filter()
+    elif author:
+        get_author_filter = sync_to_async(
+            lambda: SentencePack.objects.filter(author__nickname__icontains=author)
+        )
+        sentences = await get_author_filter()
     return Response(
-        {},
+        [
+            {
+                "id": sentence.id,
+                "name": sentence.name,
+                "author": sentence.author.nickname if sentence.author else "Unknown",
+            }
+            for sentence in sentences
+        ],
         status=status.HTTP_200_OK,
     )
 

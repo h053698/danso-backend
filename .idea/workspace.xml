@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Remove `--noreload` flag from `runserver` command in Dockerfile to simplify development server behavior.">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Update Dockerfile to bind `runserver` to all IPs by specifying `0.0.0.0:8000`.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -161,7 +162,7 @@
       <workItem from="1750202895371" duration="6198000" />
       <workItem from="1750218232734" duration="595000" />
       <workItem from="1750228568663" duration="5069000" />
-      <workItem from="1750274593557" duration="2071000" />
+      <workItem from="1750274593557" duration="2462000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -307,7 +308,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750276606666</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Update Dockerfile to bind `runserver` to all IPs by specifying `0.0.0.0:8000`.">
+      <option name="closed" value="true" />
+      <created>1750276682646</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1750276682646</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -343,6 +352,7 @@
     <MESSAGE value="Remove `--insecure` flag from `runserver` command in Dockerfile to enhance development server configuration." />
     <MESSAGE value="Update Dockerfile to replace `uv` command with `python3` for running the development server." />
     <MESSAGE value="Remove `--noreload` flag from `runserver` command in Dockerfile to simplify development server behavior." />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove `--noreload` flag from `runserver` command in Dockerfile to simplify development server behavior." />
+    <MESSAGE value="Update Dockerfile to bind `runserver` to all IPs by specifying `0.0.0.0:8000`." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update Dockerfile to bind `runserver` to all IPs by specifying `0.0.0.0:8000`." />
   </component>
 </project>
