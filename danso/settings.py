@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "psycopg2",
     "adrf",
+    "rest_framework",
     "user.apps.UserConfig",
     "sentence.apps.SentenceConfig",
 ]

@@ -2,11 +2,12 @@ import random, string, aiohttp
 from urllib.parse import urlencode
 from asgiref.sync import sync_to_async
 
-from django.http import HttpRequest, JsonResponse, HttpResponseNotAllowed, HttpResponse
+from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.shortcuts import redirect, render
 from adrf.decorators import api_view
 
 from danso import settings
+from user.auth import login_code_to_user
 from user.models import GameUser
 
 GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
@@ -52,16 +53,6 @@ async def get_oauth_user_data(access_token: str) -> dict:
             raise Exception(
                 f"Failed to fetch user data: {response.status} {response.reason}"
             )
-
-
-async def login_code_to_user(login_code: str) -> GameUser | HttpResponse:
-    user_filter = sync_to_async(
-        lambda: list(GameUser.objects.filter(login_code=login_code))
-    )
-    users = await user_filter()
-    if len(users) == 0:
-        return JsonResponse({"message": "로그인이 필요합니다."}, status=401)
-    return users[0]
 
 
 @api_view(["GET"])
