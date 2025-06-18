@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Update Dockerfile to switch from `gunicorn` to Django's `runserver` for development purposes. Comment out previous production command.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Remove `--insecure` flag from `runserver` command in Dockerfile to enhance development server configuration.">
       <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -162,7 +161,7 @@
       <workItem from="1750202895371" duration="6198000" />
       <workItem from="1750218232734" duration="595000" />
       <workItem from="1750228568663" duration="5069000" />
-      <workItem from="1750274593557" duration="1688000" />
+      <workItem from="1750274593557" duration="1853000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -284,7 +283,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750276035011</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Remove `--insecure` flag from `runserver` command in Dockerfile to enhance development server configuration.">
+      <option name="closed" value="true" />
+      <created>1750276295666</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1750276295666</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -317,6 +324,7 @@
     <MESSAGE value="Add `level` field to `SentencePack`, implement new async views for `sentence` app, and refactor `user` authentication flow." />
     <MESSAGE value="Introduce `realtime` app with initial setup, async player matching, and endpoint integration into URL configuration. Refactor quoting style in `sentence` app for consistency." />
     <MESSAGE value="Update Dockerfile to switch from `gunicorn` to Django's `runserver` for development purposes. Comment out previous production command." />
-    <option name="LAST_COMMIT_MESSAGE" value="Update Dockerfile to switch from `gunicorn` to Django's `runserver` for development purposes. Comment out previous production command." />
+    <MESSAGE value="Remove `--insecure` flag from `runserver` command in Dockerfile to enhance development server configuration." />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove `--insecure` flag from `runserver` command in Dockerfile to enhance development server configuration." />
   </component>
 </project>
