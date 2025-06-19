@@ -23,6 +23,7 @@ from realtime.views import (
     in_game_heartbeat,
     join_room,
     missed_word,
+leave_room,
 )
 
 urlpatterns = [
@@ -53,4 +54,5 @@ urlpatterns = [
         name="realtime-game-room",
     ),
     path("realtime/game/<str:room_id>/missed", missed_word, name="realtime-game-join"),
+    path("realtime/game/<str:room_id>/leave", leave_room, name="realtime-game-leave"),
 ]

@@ -112,6 +112,7 @@ async def check_match_status(request: HttpRequest):
         )
         random_game = await get_random_game()
 
+        print(random_game.sentences)
         game_data = {
             "id": random_game.id,
             "name": random_game.name,
@@ -191,6 +192,27 @@ async def in_game_heartbeat(request: HttpRequest, room_id: str):
         opponent_status["event"] = "reconnected"
 
     return Response(opponent_status, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+async def leave_room(request: HttpRequest, room_id: str):
+    login_code = request.headers.get("X-Login-Code", None)
+    if not login_code or not room_id:
+        return Response(
+            {"error": "Login code and room_id are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    user = await login_code_to_user(login_code)
+
+    if room_manager.leave_room(room_id, str(user.id)):
+        room_manager.add_event(room_id, str(user.id), "left")
+        return Response({"status": "success"})
+
+    return Response(
+        {"error": "Failed to leave room"},
+        status=status.HTTP_400_BAD_REQUEST
+    )
 
 
 @api_view(["POST"])

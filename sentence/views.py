@@ -199,8 +199,8 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
 
 
 @api_view(["POST"])
-async def update_sentence_game_point(request: HttpRequest, sentence_id: int):
-    if not sentence_id:
+async def update_sentence_game_point(request: HttpRequest, sentence_pack_id: int):
+    if not sentence_pack_id:
         return Response(
             {"error": "문장 그룹 ID가 제공되지 않았습니다."},
             status=status.HTTP_400_BAD_REQUEST,
@@ -216,7 +216,7 @@ async def update_sentence_game_point(request: HttpRequest, sentence_id: int):
 
     try:
         get_sentence_pack = sync_to_async(
-            lambda: SentencePack.objects.select_related("author").get(id=sentence_id)
+            lambda: SentencePack.objects.select_related("author").get(id=sentence_pack_id)
         )
         sentence_pack = await get_sentence_pack()
     except SentencePack.DoesNotExist:

@@ -3,65 +3,74 @@ from django.urls import get_resolver
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from django.shortcuts import render
 
-API_DOCUMENTATION = {
-    "sentences": {
-        "GET /sentences/": "문장 팩 목록을 가져옵니다.",
-        "GET /sentences/random": "랜덤 문장 팩을 가져옵니다.",
-        "GET /sentences/search": "문장 팩을 검색합니다.",
-        "GET /sentences/<id>": "특정 문장 팩의 상세 정보를 가져옵니다.",
-        "GET /sentences/<id>/game": "특정 문장 팩의 게임 정보를 가져옵니다.",
-        "POST /sentences/<id>/set-score": "문장 팩의 점수를 설정합니다.",
-    },
-    "user": {
-        "GET /user/me": "현재 로그인한 사용자 정보를 가져옵니다.",
-        "GET /user/logout": "로그아웃합니다.",
-        "GET /login/oauth/": "OAuth 로그인 URL을 가져옵니다.",
-        "GET /login/callback": "OAuth 콜백을 처리합니다.",
-        "GET /login/result": "로그인 결과를 렌더링합니다.",
-    },
-    "realtime": {
-        "POST /realtime/match/player": "랜덤 매칭을 시작합니다.",
-        "GET /realtime/match/status": "매칭 상태를 확인합니다.",
-        "POST /realtime/match/join": "특정 방에 입장합니다.",
-        "POST /realtime/game/<room_id>/heartbeat": {
-            "description": "게임 진행 상태를 업데이트하고 상대방 정보를 받습니다.",
-            "request": {
-                "now_text": "현재 입력 중인 텍스트",
-                "position": "현재 문장 위치 (숫자)",
-                "heart": "현재 생명력",
-            },
-            "response": {
-                "now_text": "상대방이 입력 중인 텍스트",
-                "position": "상대방의 현재 문장 위치",
-                "heart": "상대방의 생명력",
-                "completion_percentage": "상대방의 진행률",
-                "event": "게임 이벤트 (damaged/timeout/reconnected/game_ended/left)",
-            },
-        },
-        "POST /realtime/game/<room_id>/missed": "단어를 틀렸을 때 호출합니다.",
-    },
-}
+def get_all_urls(url_patterns, base='', urls=None):
+    if urls is None:
+        urls = {}
+
+    for pattern in url_patterns:
+        if hasattr(pattern, 'url_patterns'):
+            # URL pattern이 include된 경우
+            get_all_urls(pattern.url_patterns, base + str(pattern.pattern), urls)
+        else:
+            # 단일 URL pattern인 경우
+            full_path = base + str(pattern.pattern)
+            # admin 페이지 제외
+            if not full_path.startswith('admin/'):
+                view = pattern.callback
+                # HTTP 메소드 가져오기
+                if hasattr(view, 'cls'):
+                    methods = [m.upper() for m in view.cls.http_method_names if m != 'options']
+                elif hasattr(view, 'actions'):
+                    methods = [m.upper() for m in view.actions.keys()]
+                else:
+                    methods = ['GET']  # 기본값
+
+                for method in methods:
+                    key = f"{method} {full_path}"
+                    if hasattr(view, '__doc__') and view.__doc__:
+                        urls[key] = view.__doc__.strip()
+                    else:
+                        urls[key] = "설명이 없습니다."
+
+    return urls
 
 
 def api_docs(request):
-    return render(request, "api_docs.html", {"api_docs": API_DOCUMENTATION})
+    """API 문서 페이지를 렌더링합니다."""
+    resolver = get_resolver()
+    all_urls = get_all_urls(resolver.url_patterns)
+
+    # URL들을 그룹화
+    grouped_urls = {
+        "sentences": {},
+        "user": {},
+        "realtime": {},
+        "other": {},
+    }
+
+    for url, desc in all_urls.items():
+        if url.startswith(("GET /sentences", "POST /sentences")):
+            grouped_urls["sentences"][url] = desc
+        elif url.startswith(("GET /user", "POST /user", "GET /login")):
+            grouped_urls["user"][url] = desc
+        elif url.startswith(("GET /realtime", "POST /realtime")):
+            grouped_urls["realtime"][url] = desc
+        else:
+            grouped_urls["other"][url] = desc
+
+    return render(request, "api_docs.html", {"api_docs": grouped_urls})
 
 
 @api_view(["GET"])
 def api_root(request):
     """API 루트 페이지를 반환합니다."""
-    return Response(
-        {
-            "version": "1.0.0",
-            "title": "Danso API",
-            "description": "단소 게임 서버 API",
-            "endpoints": API_DOCUMENTATION,
-        }
-    )
+    resolver = get_resolver()
+    all_urls = get_all_urls(resolver.url_patterns)
 
-
-def api_docs(request):
-    """API 문서 페이지를 렌더링합니다."""
-    return render(request, "api_docs.html", {"api_docs": API_DOCUMENTATION})
+    return Response({
+        "version": "1.0.0",
+        "title": "Danso API",
+        "description": "단소 게임 서버 API",
+        "endpoints": all_urls
+    })

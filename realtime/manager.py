@@ -16,21 +16,69 @@ class RealtimeRoomManager:
     def join_random_room(self, user_id: str):
         waiting_rooms = cache.get(self.WAITING_ROOM_KEY, [])
 
-        if waiting_rooms:
-            room_id = waiting_rooms.pop(0)
-            room = cache.get(f"room:{room_id}", {})
-            room["players"].append(user_id)
+        # 먼저 유저가 이미 어떤 방에 있는지 확인
+        for room_id in waiting_rooms:
+            room = cache.get(f"room:{room_id}")
+            if room and user_id in room["players"]:
+                # 이미 방에 있다면 같은 상태를 반환
+                return {
+                    "room_id": room_id,
+                    "status": "matched" if len(room["players"]) >= 2 else "waiting",
+                    "players": room["players"]
+                }
 
-            cache.set(f"room:{room_id}", room, timeout=3600)
-            cache.set(self.WAITING_ROOM_KEY, waiting_rooms)
-            return {"room_id": room_id, "status": "matched", "players": room["players"]}
+        # 호스트인 방이 있는지 확인
+        for room_id in waiting_rooms:
+            room = cache.get(f"room:{room_id}")
+            if room and len(room["players"]) == 1 and room["players"][0] == user_id:
+                # 내가 호스트인 방이 있다면 그 방의 상태를 반환
+                return {
+                    "room_id": room_id,
+                    "status": "waiting",
+                    "players": room["players"]
+                }
 
+        # 대기 중인 방 중에서 매칭 가능한 방 찾기
+        for i, room_id in enumerate(waiting_rooms):
+            room = cache.get(f"room:{room_id}")
+            if room and len(room["players"]) == 1 and user_id not in room["players"]:
+                # 적합한 방을 찾았을 때
+                waiting_rooms.pop(i)
+                room["players"].append(user_id)
+                cache.set(f"room:{room_id}", room, timeout=3600)
+                cache.set(self.WAITING_ROOM_KEY, waiting_rooms)
+                return {"room_id": room_id, "status": "matched", "players": room["players"]}
+
+        # 적합한 방을 찾지 못했고 호스트인 방도 없을 경우에만 새로운 방 생성
         room_id = self.generate_room_code()
         room_data = {"players": [user_id], "type": "waiting"}
         cache.set(f"room:{room_id}", room_data, timeout=600)
         waiting_rooms.append(room_id)
         cache.set(self.WAITING_ROOM_KEY, waiting_rooms)
         return {"room_id": room_id, "status": "waiting", "players": [user_id]}
+
+    @staticmethod
+    def leave_room(room_id: str, user_id: str):
+        key = f"room:{room_id}"
+        room = cache.get(key)
+        if not room:
+            return False
+
+        if user_id in room["players"]:
+            room["players"].remove(user_id)
+
+            # 방에 아무도 없으면 방 삭제
+            if not room["players"]:
+                cache.delete(key)
+                # 대기방 목록에서도 제거
+                waiting_rooms = cache.get(RealtimeRoomManager.WAITING_ROOM_KEY, [])
+                if room_id in waiting_rooms:
+                    waiting_rooms.remove(room_id)
+                    cache.set(RealtimeRoomManager.WAITING_ROOM_KEY, waiting_rooms)
+            else:
+                cache.set(key, room, timeout=3600)
+            return True
+        return False
 
     @staticmethod
     def join_specific_room(room_id: str, user_id: str):
