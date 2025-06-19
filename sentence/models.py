@@ -37,10 +37,10 @@ class SentenceLeaderboard(models.Model):
     player = models.ForeignKey(
         GameUser, on_delete=models.CASCADE, related_name="game_scores"
     )
-    total_score = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ("sentence_pack", "player")
 
     def __str__(self):
-        return f"Leaderboard: {self.sentence_pack.name} - {self.player.nickname}: {self.total_score}점"
+        return f"Leaderboard: {self.sentence_pack.name} - {self.player.nickname}: {self.score}점"

@@ -18,6 +18,7 @@ async def get_sentence_packs(request: HttpRequest):
             "id": sentence.id,
             "name": sentence.name,
             "author": sentence.author.nickname if sentence.author else "Unknown",
+            "original_author": sentence.original_author,
         }
         for sentence in sentences
     ]
@@ -35,6 +36,7 @@ async def get_sentence_packs_random(request: HttpRequest):
             "id": sentence.id,
             "name": sentence.name,
             "author": sentence.author.nickname if sentence.author else "Unknown",
+            "original_author": sentence.original_author,
         }
         for sentence in sentences
     ]
@@ -72,6 +74,7 @@ async def search_sentence_pack(request: HttpRequest):
                 "id": sentence.id,
                 "name": sentence.name,
                 "author": sentence.author.nickname if sentence.author else "Unknown",
+                "original_author": sentence.original_author,
             }
             for sentence in sentences
         ],
@@ -82,9 +85,7 @@ async def search_sentence_pack(request: HttpRequest):
 async def get_leaderboard_data(sentence_pack: SentencePack):
     get_all_leaderboards = sync_to_async(
         lambda: list(
-            sentence_pack.leaderboards.all()
-            .select_related("player")
-            .order_by("-total_score")
+            sentence_pack.leaderboards.all().select_related("player").order_by("-score")
         )
     )
     all_leaderboards = await get_all_leaderboards()
@@ -118,6 +119,7 @@ async def get_sentence_game(request: HttpRequest, sentence_id: int):
             "author": (
                 sentence_pack.author.nickname if sentence_pack.author else "알 수 없음"
             ),
+            "original_author": sentence_pack.original_author,
             "sentences": sentence_pack.sentences.split("\r\n"),
         },
         status=status.HTTP_200_OK,
@@ -131,8 +133,8 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
 
     get_all_ranks = sync_to_async(
         lambda: list(
-            sentence_pack.leaderboards.order_by("-total_score").values_list(
-                "total_score", flat=True
+            sentence_pack.leaderboards.order_by("-score").values_list(
+                "score", flat=True
             )
         )
     )
@@ -141,7 +143,7 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
     all_scores = await get_all_ranks()
 
     if user_leaderboard:
-        user_score = user_leaderboard.total_score
+        user_score = user_leaderboard.score
         user_rank = all_scores.index(user_score) + 1
     else:
         user_score = 0
@@ -150,12 +152,12 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
     get_nearby_users = sync_to_async(
         lambda: list(
             sentence_pack.leaderboards.select_related("player")
-            .order_by("-total_score")
-            .filter(total_score__gte=user_score)[:1]
+            .order_by("-score")
+            .filter(score__gte=user_score)[:1]
             .union(
                 sentence_pack.leaderboards.select_related("player")
-                .order_by("-total_score")
-                .filter(total_score__lte=user_score)[:1]
+                .order_by("-score")
+                .filter(score__lte=user_score)[:1]
             )
         )
     )
@@ -167,14 +169,14 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
     nearby_user_2 = {"player": "없음", "score": 0, "rank": user_rank + 1}
 
     if len(nearby_users) > 0:
-        if nearby_users[0].total_score >= user_score:
+        if nearby_users[0].score >= user_score:
             nearby_user_1 = {
                 "player": (
                     nearby_users[0].player.nickname
                     if nearby_users[0].player
                     else "알 수 없음"
                 ),
-                "score": nearby_users[0].total_score,
+                "score": nearby_users[0].score,
                 "rank": user_rank - 1,
             }
         if len(nearby_users) > 1:
@@ -184,7 +186,7 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
                     if nearby_users[1].player
                     else "알 수 없음"
                 ),
-                "score": nearby_users[1].total_score,
+                "score": nearby_users[1].score,
                 "rank": user_rank + 1,
             }
 
@@ -233,7 +235,7 @@ async def update_sentence_game_point(request: HttpRequest, sentence_id: int):
         lambda: sentence_pack.leaderboards.get_or_create(player=user)
     )()
 
-    leaderboard.total_score = int(score)
+    leaderboard.score = int(score)
     await sync_to_async(leaderboard.save)()
 
     return Response(
@@ -277,6 +279,7 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
             "author": (
                 sentence_pack.author.nickname if sentence_pack.author else "알 수 없음"
             ),
+            "original_author": sentence_pack.original_author,
             "leaderboard": [
                 {
                     "player": (
@@ -284,7 +287,7 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
                         if leaderboard.player
                         else "알 수 없음"
                     ),
-                    "score": leaderboard.total_score,
+                    "score": leaderboard.score,
                 }
                 for leaderboard in leaderboards
             ],

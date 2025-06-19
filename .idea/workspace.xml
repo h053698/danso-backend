@@ -4,9 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Fix leaderboard score update by casting `score` to `int` in async view.">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Add `CSRF_TRUSTED_ORIGINS` configuration to `settings.py`.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/danso/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/danso/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/realtime/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/realtime/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/migrations/0003_sentenceleaderboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/migrations/0003_sentenceleaderboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +24,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -162,7 +167,7 @@
       <workItem from="1750202895371" duration="6198000" />
       <workItem from="1750218232734" duration="595000" />
       <workItem from="1750228568663" duration="5069000" />
-      <workItem from="1750274593557" duration="3999000" />
+      <workItem from="1750274593557" duration="12858000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -332,7 +337,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750295640569</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Add `CSRF_TRUSTED_ORIGINS` configuration to `settings.py`.">
+      <option name="closed" value="true" />
+      <created>1750295830963</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1750295830963</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -370,6 +383,7 @@
     <MESSAGE value="Remove `--noreload` flag from `runserver` command in Dockerfile to simplify development server behavior." />
     <MESSAGE value="Update Dockerfile to bind `runserver` to all IPs by specifying `0.0.0.0:8000`." />
     <MESSAGE value="Fix leaderboard score update by casting `score` to `int` in async view." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix leaderboard score update by casting `score` to `int` in async view." />
+    <MESSAGE value="Add `CSRF_TRUSTED_ORIGINS` configuration to `settings.py`." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add `CSRF_TRUSTED_ORIGINS` configuration to `settings.py`." />
   </component>
 </project>

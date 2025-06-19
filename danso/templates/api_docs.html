@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Danso API Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #444;
+            margin-top: 30px;
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .method-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .method {
+            font-family: monospace;
+            padding: 3px 6px;
+            border-radius: 3px;
+            background: #e9ecef;
+        }
+        .try-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        .try-button:hover {
+            background: #218838;
+        }
+        .description {
+            margin-top: 10px;
+            color: #666;
+        }
+        .details {
+            margin: 10px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 5px 0;
+        }
+        .test-panel {
+            display: none;
+            margin-top: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        .test-panel.active {
+            display: block;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #495057;
+            font-weight: 500;
+        }
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .input-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .send-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .send-button:hover {
+            background: #0056b3;
+        }
+        .response-panel {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            display: none;
+        }
+        .response-panel.active {
+            display: block;
+        }
+        .response-panel pre {
+            margin: 10px 0 0 0;
+            background: #f8f9fa;
+        }
+        .get { color: #28a745; }
+        .post { color: #007bff; }
+        .put { color: #ffc107; }
+        .delete { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Danso API Documentation</h1>
+
+        {% for category, endpoints in api_docs.items %}
+        <h2>{{ category|title }}</h2>
+        {% for endpoint, info in endpoints.items %}
+            <div class="endpoint" data-endpoint="{{ endpoint }}">
+                <div class="method-container">
+                    <span class="method {% if 'GET' in endpoint %}get{% elif 'POST' in endpoint %}post{% elif 'PUT' in endpoint %}put{% elif 'DELETE' in endpoint %}delete{% endif %}">{{ endpoint }}</span>
+                    <button class="try-button" onclick="toggleTestPanel(this)">Try Request</button>
+                </div>
+                {% if info.description %}
+                    <div class="description">{{ info.description }}</div>
+                    {% if info.request %}
+                    <div class="details">
+                        <strong>Request:</strong>
+                        <pre>{{ info.request }}</pre>
+                    </div>
+                    {% endif %}
+                    {% if info.response %}
+                    <div class="details">
+                        <strong>Response:</strong>
+                        <pre>{{ info.response }}</pre>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="description">{{ info }}</div>
+                {% endif %}
+                <div class="test-panel">
+                    <div class="input-group">
+                        <label>X-Login-Code</label>
+                        <input type="text" class="login-code" placeholder="Enter login code">
+                    </div>
+                    {% if 'POST' in endpoint %}
+                    <div class="input-group">
+                        <label>Request Body</label>
+                        <textarea class="request-body" placeholder='{"key": "value"}'></textarea>
+                    </div>
+                    {% endif %}
+                    <button class="send-button" onclick="testEndpoint(this)">Send Request</button>
+                    <div class="response-panel">
+                        <strong>Response</strong>
+                        <pre class="response-content"></pre>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+
+    <script>
+        function toggleTestPanel(element) {
+            const testPanel = element.closest('.endpoint').querySelector('.test-panel');
+            const allPanels = document.querySelectorAll('.test-panel');
+            allPanels.forEach(panel => {
+                if (panel !== testPanel) {
+                    panel.classList.remove('active');
+                }
+            });
+            testPanel.classList.toggle('active');
+        }
+
+        async function testEndpoint(button) {
+            const endpoint = button.closest('.endpoint').getAttribute('data-endpoint');
+            const method = endpoint.split(' ')[0];
+            let url = endpoint.split(' ')[1];
+
+            const loginCode = button.closest('.test-panel').querySelector('.login-code').value;
+
+            const responsePanel = button.closest('.test-panel').querySelector('.response-panel');
+            const responseContent = responsePanel.querySelector('.response-content');
+
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                };
+                if (loginCode) {
+                    headers['X-Login-Code'] = loginCode;
+                }
+
+                let options = {
+                    method: method,
+                    headers: headers
+                };
+
+                if (method === 'POST') {
+                    const bodyInput = button.closest('.test-panel').querySelector('.request-body');
+                    if (bodyInput && bodyInput.value) {
+                        options.body = bodyInput.value;
+                    }
+                }
+
+                if (url.includes('<')) {
+                    const paramName = url.match(/<(.+?)>/)[1];
+                    const paramValue = prompt(`Enter value for ${paramName}:`);
+                    if (paramValue) {
+                        url = url.replace(`<${paramName}>`, paramValue);
+                    }
+                }
+
+                const response = await fetch(url, options);
+                const data = await response.json();
+
+                responseContent.textContent = JSON.stringify(data, null, 2);
+                responsePanel.classList.add('active');
+            } catch (error) {
+                responseContent.textContent = `Error: ${error.message}`;
+                responsePanel.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
