@@ -55,17 +55,27 @@ async def search_sentence_pack(request: HttpRequest):
         )
     if keyword:
         get_keyword_filter = sync_to_async(
-            lambda: list(SentencePack.objects.select_related("author").filter(name__icontains=keyword))
+            lambda: list(
+                SentencePack.objects.select_related("author").filter(
+                    name__icontains=keyword
+                )
+            )
         )
         sentences = await get_keyword_filter()
     elif level:
         get_level_filter = sync_to_async(
-            lambda: list(SentencePack.objects.select_related("author").filter(level=level))
+            lambda: list(
+                SentencePack.objects.select_related("author").filter(level=level)
+            )
         )
         sentences = await get_level_filter()
     elif author:
         get_author_filter = sync_to_async(
-            lambda: list(SentencePack.objects.select_related("author").filter(author__nickname__icontains=author))
+            lambda: list(
+                SentencePack.objects.select_related("author").filter(
+                    author__nickname__icontains=author
+                )
+            )
         )
         sentences = await get_author_filter()
     return Response(
@@ -140,8 +150,9 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
     )
     get_top5_players = sync_to_async(
         lambda: list(
-            sentence_pack.leaderboards.order_by("-score")
-            .values_list("player_id", flat=True)[:5]
+            sentence_pack.leaderboards.order_by("-score").values_list(
+                "player_id", flat=True
+            )[:5]
         )
     )
 
@@ -170,6 +181,7 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
     )
 
     nearby_users = await get_nearby_users()
+
     def is_in_top5(nearby_user):
         return getattr(nearby_user, "player_id", None) in top5_player_ids
 
@@ -239,12 +251,15 @@ async def update_sentence_game_point(request: HttpRequest, sentence_pack_id: int
         lambda: sentence_pack.leaderboards.get_or_create(player=user)
     )()
 
-    leaderboard.score = int(score)
-    await sync_to_async(leaderboard.save)()
+    new_score = int(score)
+    if created or leaderboard.score < new_score:
+        leaderboard.score = new_score
+        await sync_to_async(leaderboard.save)()
+        message = "최고 점수가 업데이트되었습니다."
+    else:
+        message = "기존 최고 점수보다 낮아 업데이트되지 않았습니다."
 
-    return Response(
-        {"message": "점수가 업데이트되었습니다."}, status=status.HTTP_200_OK
-    )
+    return Response({"message": message}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
