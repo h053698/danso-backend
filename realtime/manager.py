@@ -13,6 +13,42 @@ class RealtimeRoomManager:
             if not cache.get(f"room:{code}"):
                 return str(code)
 
+    @staticmethod
+    def update_user_game_status(
+            room_id: str, user_id: str, now_text: str, position: int, heart: int = 5
+    ):
+        key = f"room:{room_id}"
+        room = cache.get(key)
+        if not room:
+            return False
+
+        current_time = time.time()
+
+        if "player_status" not in room:
+            room["player_status"] = {}
+
+        # 진행률 계산
+        if "game" in room and "sentences" in room["game"]:
+            total_sentences = len(room["game"]["sentences"])
+            completion_percentage = (position / total_sentences) * 100
+        else:
+            completion_percentage = 0
+
+        # 처음 상태 업데이트시 하트를 5로 설정
+        if user_id not in room["player_status"]:
+            heart = 5
+
+        room["player_status"][user_id] = {
+            "now_text": now_text,
+            "position": position,
+            "heart": heart,
+            "completion_percentage": completion_percentage,
+            "last_heartbeat": current_time,
+        }
+
+        cache.set(key, room, timeout=3600)
+        return True
+
     def join_random_room(self, user_id: str):
         waiting_rooms = cache.get(self.WAITING_ROOM_KEY, [])
 
@@ -21,6 +57,11 @@ class RealtimeRoomManager:
             room = cache.get(f"room:{room_id}")
             if room and user_id in room["players"]:
                 # 이미 방에 있다면 같은 상태를 반환
+                if "player_status" not in room:
+                    room["player_status"] = {}
+                if user_id not in room["player_status"]:
+                    room["player_status"][user_id] = {"heart": 5}
+                    cache.set(f"room:{room_id}", room, timeout=3600)
                 return {
                     "room_id": room_id,
                     "status": "matched" if len(room["players"]) >= 2 else "waiting",
@@ -86,12 +127,20 @@ class RealtimeRoomManager:
         room = cache.get(key)
 
         if not room:
-            room = {"players": [user_id], "type": "custom"}
+            room = {
+                "players": [user_id],
+                "type": "custom",
+                "player_status": {user_id: {"heart": 5}}
+            }
             cache.set(key, room, timeout=3600)
             return {"room_id": room_id, "status": "waiting", "players": [user_id]}
 
+        if "player_status" not in room:
+            room["player_status"] = {}
+        room["player_status"][user_id] = {"heart": 5}
         room["players"].append(user_id)
         cache.set(key, room, timeout=3600)
+
         return {
             "room_id": room_id,
             "status": "matched" if len(room["players"]) >= 2 else "waiting",
@@ -186,13 +235,15 @@ class RealtimeRoomManager:
         if len(room["players"]) < 2:
             events.append("left")
 
-        return {
+        response = {
             "now_text": opponent_status["now_text"],
             "position": opponent_status["position"],
             "heart": opponent_status["heart"],
             "completion_percentage": opponent_status["completion_percentage"],
-            "event": events[0] if events else None,
+            "event": events[0] if events else "idle"  # 이벤트가 없으면 'idle' 반환
         }
+
+        return response
 
     @staticmethod
     def add_event(room_id: str, user_id: str, event_type: str):

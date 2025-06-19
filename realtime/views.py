@@ -117,7 +117,7 @@ async def check_match_status(request: HttpRequest):
             "id": random_game.id,
             "name": random_game.name,
             "author": random_game.author.nickname if random_game.author else "Unknown",
-            "sentences": [sentence.content for sentence in random_game.sentences.all()],
+            "sentences": random_game.sentences.split("\r\n"),
         }
 
         # 게임 데이터를 방 세션에 저장
