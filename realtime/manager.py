@@ -29,7 +29,7 @@ class RealtimeRoomManager:
                 return {
                     "room_id": room_id,
                     "status": "matched" if len(room["players"]) >= 2 else "waiting",
-                    "players": room["players"]
+                    "players": room["players"],
                 }
 
         # 호스트인 방이 있는지 확인
@@ -40,7 +40,7 @@ class RealtimeRoomManager:
                 return {
                     "room_id": room_id,
                     "status": "waiting",
-                    "players": room["players"]
+                    "players": room["players"],
                 }
 
         # 대기 중인 방 중에서 매칭 가능한 방 찾기
@@ -52,7 +52,11 @@ class RealtimeRoomManager:
                 room["players"].append(user_id)
                 cache.set(f"room:{room_id}", room, timeout=3600)
                 cache.set(self.WAITING_ROOM_KEY, waiting_rooms)
-                return {"room_id": room_id, "status": "matched", "players": room["players"]}
+                return {
+                    "room_id": room_id,
+                    "status": "matched",
+                    "players": room["players"],
+                }
 
         # 적합한 방을 찾지 못했고 호스트인 방도 없을 경우에만 새로운 방 생성
         room_id = self.generate_room_code()
@@ -94,7 +98,7 @@ class RealtimeRoomManager:
             room = {
                 "players": [user_id],
                 "type": "custom",
-                "player_status": {user_id: {"heart": 5}}
+                "player_status": {user_id: {"heart": 5}},
             }
             cache.set(key, room, timeout=3600)
             return {"room_id": room_id, "status": "waiting", "players": [user_id]}
@@ -204,7 +208,7 @@ class RealtimeRoomManager:
             "position": opponent_status["position"],
             "heart": opponent_status["heart"],
             "completion_percentage": opponent_status["completion_percentage"],
-            "event": events[0] if events else "idle"  # 이벤트가 없으면 'idle' 반환
+            "event": events[0] if events else "idle",  # 이벤트가 없으면 'idle' 반환
         }
 
         return response

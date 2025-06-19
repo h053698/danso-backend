@@ -4,31 +4,33 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 
-def get_all_urls(url_patterns, base='', urls=None):
+def get_all_urls(url_patterns, base="", urls=None):
     if urls is None:
         urls = {}
 
     for pattern in url_patterns:
-        if hasattr(pattern, 'url_patterns'):
+        if hasattr(pattern, "url_patterns"):
             # URL pattern이 include된 경우
             get_all_urls(pattern.url_patterns, base + str(pattern.pattern), urls)
         else:
             # 단일 URL pattern인 경우
             full_path = base + str(pattern.pattern)
             # admin 페이지 제외
-            if not full_path.startswith('admin/'):
+            if not full_path.startswith("admin/"):
                 view = pattern.callback
                 # HTTP 메소드 가져오기
-                if hasattr(view, 'cls'):
-                    methods = [m.upper() for m in view.cls.http_method_names if m != 'options']
-                elif hasattr(view, 'actions'):
+                if hasattr(view, "cls"):
+                    methods = [
+                        m.upper() for m in view.cls.http_method_names if m != "options"
+                    ]
+                elif hasattr(view, "actions"):
                     methods = [m.upper() for m in view.actions.keys()]
                 else:
-                    methods = ['GET']  # 기본값
+                    methods = ["GET"]  # 기본값
 
                 for method in methods:
                     key = f"{method} {full_path}"
-                    if hasattr(view, '__doc__') and view.__doc__:
+                    if hasattr(view, "__doc__") and view.__doc__:
                         urls[key] = view.__doc__.strip()
                     else:
                         urls[key] = "설명이 없습니다."
@@ -68,9 +70,11 @@ def api_root(request):
     resolver = get_resolver()
     all_urls = get_all_urls(resolver.url_patterns)
 
-    return Response({
-        "version": "1.0.0",
-        "title": "Danso API",
-        "description": "단소 게임 서버 API",
-        "endpoints": all_urls
-    })
+    return Response(
+        {
+            "version": "1.0.0",
+            "title": "Danso API",
+            "description": "단소 게임 서버 API",
+            "endpoints": all_urls,
+        }
+    )

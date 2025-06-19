@@ -23,7 +23,7 @@ from realtime.views import (
     in_game_heartbeat,
     join_room,
     missed_word,
-leave_room,
+    leave_room,
 )
 
 urlpatterns = [

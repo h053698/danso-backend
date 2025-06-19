@@ -1,5 +1,6 @@
 from asgiref.sync import sync_to_async
 from django.http import HttpResponse, JsonResponse
+from rest_framework.exceptions import AuthenticationFailed
 
 from user.models import GameUser
 
@@ -8,11 +9,11 @@ __all__ = [
 ]
 
 
-async def login_code_to_user(login_code: str) -> GameUser | HttpResponse:
+async def login_code_to_user(login_code: str) -> GameUser:
     user_filter = sync_to_async(
         lambda: list(GameUser.objects.filter(login_code=login_code))
     )
     users = await user_filter()
     if len(users) == 0:
-        return JsonResponse({"message": "로그인이 필요합니다."}, status=401)
+        raise AuthenticationFailed("로그인이 필요합니다.")
     return users[0]

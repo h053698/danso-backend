@@ -112,7 +112,6 @@ async def check_match_status(request: HttpRequest):
         )
         random_game = await get_random_game()
 
-        print(random_game.sentences)
         game_data = {
             "id": random_game.id,
             "name": random_game.name,
@@ -210,8 +209,7 @@ async def leave_room(request: HttpRequest, room_id: str):
         return Response({"status": "success"})
 
     return Response(
-        {"error": "Failed to leave room"},
-        status=status.HTTP_400_BAD_REQUEST
+        {"error": "Failed to leave room"}, status=status.HTTP_400_BAD_REQUEST
     )
 
 

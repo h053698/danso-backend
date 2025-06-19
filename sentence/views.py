@@ -55,17 +55,17 @@ async def search_sentence_pack(request: HttpRequest):
         )
     if keyword:
         get_keyword_filter = sync_to_async(
-            lambda: SentencePack.objects.filter(name__icontains=keyword)
+            lambda: list(SentencePack.objects.select_related("author").filter(name__icontains=keyword))
         )
         sentences = await get_keyword_filter()
     elif level:
         get_level_filter = sync_to_async(
-            lambda: SentencePack.objects.filter(level=level)
+            lambda: list(SentencePack.objects.select_related("author").filter(level=level))
         )
         sentences = await get_level_filter()
     elif author:
         get_author_filter = sync_to_async(
-            lambda: SentencePack.objects.filter(author__nickname__icontains=author)
+            lambda: list(SentencePack.objects.select_related("author").filter(author__nickname__icontains=author))
         )
         sentences = await get_author_filter()
     return Response(
@@ -138,9 +138,16 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
             )
         )
     )
+    get_top5_players = sync_to_async(
+        lambda: list(
+            sentence_pack.leaderboards.order_by("-score")
+            .values_list("player_id", flat=True)[:5]
+        )
+    )
 
     user_leaderboard = await get_leaderboard()
     all_scores = await get_all_ranks()
+    top5_player_ids = await get_top5_players()
 
     if user_leaderboard:
         user_score = user_leaderboard.score
@@ -163,29 +170,24 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
     )
 
     nearby_users = await get_nearby_users()
+    def is_in_top5(nearby_user):
+        return getattr(nearby_user, "player_id", None) in top5_player_ids
 
     nearby_user_1 = {"player": "없음", "score": 0, "rank": user_rank - 1}
 
     nearby_user_2 = {"player": "없음", "score": 0, "rank": user_rank + 1}
 
-    if len(nearby_users) > 0:
-        if nearby_users[0].score >= user_score:
+    if len(nearby_users) > 0 and nearby_users[0] and not is_in_top5(nearby_users[0]):
+        if getattr(nearby_users[0], "player", None):
             nearby_user_1 = {
-                "player": (
-                    nearby_users[0].player.nickname
-                    if nearby_users[0].player
-                    else "알 수 없음"
-                ),
+                "player": nearby_users[0].player.nickname or "없음",
                 "score": nearby_users[0].score,
                 "rank": user_rank - 1,
             }
-        if len(nearby_users) > 1:
+    if len(nearby_users) > 1 and nearby_users[1] and not is_in_top5(nearby_users[1]):
+        if getattr(nearby_users[1], "player", None):
             nearby_user_2 = {
-                "player": (
-                    nearby_users[1].player.nickname
-                    if nearby_users[1].player
-                    else "알 수 없음"
-                ),
+                "player": nearby_users[1].player.nickname or "없음",
                 "score": nearby_users[1].score,
                 "rank": user_rank + 1,
             }
@@ -216,7 +218,9 @@ async def update_sentence_game_point(request: HttpRequest, sentence_pack_id: int
 
     try:
         get_sentence_pack = sync_to_async(
-            lambda: SentencePack.objects.select_related("author").get(id=sentence_pack_id)
+            lambda: SentencePack.objects.select_related("author").get(
+                id=sentence_pack_id
+            )
         )
         sentence_pack = await get_sentence_pack()
     except SentencePack.DoesNotExist:
