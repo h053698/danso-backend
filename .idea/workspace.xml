@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Update Dockerfile to bind `runserver` to all IPs by specifying `0.0.0.0:8000`.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,7 +162,7 @@
       <workItem from="1750202895371" duration="6198000" />
       <workItem from="1750218232734" duration="595000" />
       <workItem from="1750228568663" duration="5069000" />
-      <workItem from="1750274593557" duration="2462000" />
+      <workItem from="1750274593557" duration="3761000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -316,7 +316,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750276682646</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Update Dockerfile to bind `runserver` to all IPs by specifying `0.0.0.0:8000`.">
+      <option name="closed" value="true" />
+      <created>1750277196255</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1750277196255</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

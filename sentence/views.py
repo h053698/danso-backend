@@ -233,7 +233,7 @@ async def update_sentence_game_point(request: HttpRequest, sentence_id: int):
         lambda: sentence_pack.leaderboards.get_or_create(player=user)
     )()
 
-    leaderboard.total_score += score
+    leaderboard.total_score = int(score)
     await sync_to_async(leaderboard.save)()
 
     return Response(
