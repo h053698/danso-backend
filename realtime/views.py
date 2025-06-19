@@ -143,7 +143,7 @@ async def in_game_heartbeat(request: HttpRequest, room_id: str):
     login_code = request.headers.get("X-Login-Code", None)
     now_text = request.POST.get("now_text", "")
     position = request.POST.get("position", 0)
-    heart = request.POST.get("heart", 3)  # 기본값 3
+    heart = request.POST.get("heart", 5)  # 기본값 5
 
     if not login_code or not room_id:
         return Response(

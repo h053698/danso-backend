@@ -13,42 +13,6 @@ class RealtimeRoomManager:
             if not cache.get(f"room:{code}"):
                 return str(code)
 
-    @staticmethod
-    def update_user_game_status(
-            room_id: str, user_id: str, now_text: str, position: int, heart: int = 5
-    ):
-        key = f"room:{room_id}"
-        room = cache.get(key)
-        if not room:
-            return False
-
-        current_time = time.time()
-
-        if "player_status" not in room:
-            room["player_status"] = {}
-
-        # 진행률 계산
-        if "game" in room and "sentences" in room["game"]:
-            total_sentences = len(room["game"]["sentences"])
-            completion_percentage = (position / total_sentences) * 100
-        else:
-            completion_percentage = 0
-
-        # 처음 상태 업데이트시 하트를 5로 설정
-        if user_id not in room["player_status"]:
-            heart = 5
-
-        room["player_status"][user_id] = {
-            "now_text": now_text,
-            "position": position,
-            "heart": heart,
-            "completion_percentage": completion_percentage,
-            "last_heartbeat": current_time,
-        }
-
-        cache.set(key, room, timeout=3600)
-        return True
-
     def join_random_room(self, user_id: str):
         waiting_rooms = cache.get(self.WAITING_ROOM_KEY, [])
 

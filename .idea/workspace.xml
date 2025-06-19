@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Enhance `RealtimeRoomManager` with a new `leave_room` method, improve player matching logic, and refactor API documentation to dynamically generate endpoints.">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Add player status management in `RealtimeRoomManager` to track progress, hearts, and last heartbeat. Refactor room initialization and improve handling for player state updates.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/realtime/manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/realtime/manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/realtime/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/realtime/views.py" afterDir="false" />
@@ -163,7 +163,7 @@
       <workItem from="1750202895371" duration="6198000" />
       <workItem from="1750218232734" duration="595000" />
       <workItem from="1750228568663" duration="5069000" />
-      <workItem from="1750274593557" duration="14777000" />
+      <workItem from="1750274593557" duration="15770000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -357,7 +357,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750311285923</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Add player status management in `RealtimeRoomManager` to track progress, hearts, and last heartbeat. Refactor room initialization and improve handling for player state updates.">
+      <option name="closed" value="true" />
+      <created>1750313057522</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1750313057522</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -398,6 +406,7 @@
     <MESSAGE value="Add `CSRF_TRUSTED_ORIGINS` configuration to `settings.py`." />
     <MESSAGE value="Refactor leaderboard logic to rename `total_score` to `score`, implement API documentation, and introduce `RealtimeRoomManager` for real-time game room management and matching." />
     <MESSAGE value="Enhance `RealtimeRoomManager` with a new `leave_room` method, improve player matching logic, and refactor API documentation to dynamically generate endpoints." />
-    <option name="LAST_COMMIT_MESSAGE" value="Enhance `RealtimeRoomManager` with a new `leave_room` method, improve player matching logic, and refactor API documentation to dynamically generate endpoints." />
+    <MESSAGE value="Add player status management in `RealtimeRoomManager` to track progress, hearts, and last heartbeat. Refactor room initialization and improve handling for player state updates." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add player status management in `RealtimeRoomManager` to track progress, hearts, and last heartbeat. Refactor room initialization and improve handling for player state updates." />
   </component>
 </project>
