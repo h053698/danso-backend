@@ -49,12 +49,14 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "psycopg2",
     "adrf",
+    "corsheaders",
     "rest_framework",
     "user.apps.UserConfig",
     "sentence.apps.SentenceConfig",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -158,3 +160,9 @@ CACHES = {
         "LOCATION": "unique-snowflake",  # 식별자
     }
 }
+
+CORS_ORIGIN_WHITELIST = (
+    "https://danso.thnos.app",
+    "http://danso.thnos.app",
+    "http://localhost:5500",
+)
