@@ -166,3 +166,9 @@ CORS_ORIGIN_WHITELIST = (
     "http://danso.thnos.app",
     "http://localhost:5500",
 )
+
+from corsheaders.defaults import default_headers
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "x-login-code",
+]
