@@ -8,7 +8,7 @@ class SentencePack(models.Model):
     original_author = models.CharField(
         max_length=255, blank=True, null=True
     )  # 원작자 이름
-    author = models.ForeignKey(
+    author: GameUser = models.ForeignKey(
         GameUser, on_delete=models.CASCADE, related_name="sentences"
     )
     sentences = models.TextField()

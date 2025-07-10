@@ -1,3 +1,5 @@
+from typing import Callable, Coroutine, Any
+
 from asgiref.sync import sync_to_async
 from django.http import HttpRequest
 from rest_framework import status
@@ -5,6 +7,7 @@ from adrf.decorators import api_view
 from rest_framework.response import Response
 from sentence.models import SentencePack
 from user.auth import login_code_to_user
+from user.models import GameUser
 
 
 @api_view(["GET"])
@@ -54,7 +57,7 @@ async def search_sentence_pack(request: HttpRequest):
             status=status.HTTP_400_BAD_REQUEST,
         )
     if keyword:
-        get_keyword_filter = sync_to_async(
+        get_keyword_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = sync_to_async(
             lambda: list(
                 SentencePack.objects.select_related("author").filter(
                     name__icontains=keyword
@@ -63,21 +66,21 @@ async def search_sentence_pack(request: HttpRequest):
         )
         sentences = await get_keyword_filter()
     elif level:
-        get_level_filter = sync_to_async(
+        get_level_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = sync_to_async(
             lambda: list(
                 SentencePack.objects.select_related("author").filter(level=level)
             )
         )
         sentences = await get_level_filter()
     elif author:
-        get_author_filter = sync_to_async(
+        get_author_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = sync_to_async(
             lambda: list(
                 SentencePack.objects.select_related("author").filter(
                     author__nickname__icontains=author
                 )
             )
         )
-        sentences = await get_author_filter()
+        sentences: list[SentencePack] = await get_author_filter()
     return Response(
         [
             {
@@ -85,6 +88,7 @@ async def search_sentence_pack(request: HttpRequest):
                 "name": sentence.name,
                 "author": sentence.author.nickname if sentence.author else "Unknown",
                 "original_author": sentence.original_author,
+                "level": sentence.level,
             }
             for sentence in sentences
         ],
