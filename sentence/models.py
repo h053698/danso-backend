@@ -31,7 +31,6 @@ class SentencePack(models.Model):
     class Meta:
         verbose_name = "문장세트"
         verbose_name_plural = "문장세트들"
-        ordering = ['-created_at']
 
     def get_level_display_korean(self):
         return dict(self.LEVEL_CHOICES).get(self.level, "")
@@ -61,7 +60,6 @@ class SentencePackLike(models.Model):
         unique_together = ('user', 'pack')
         verbose_name = "좋아요"
         verbose_name_plural = "좋아요들"
-        ordering = ['-created_at']
 
 
 class SentenceLeaderboard(models.Model):
