@@ -5,7 +5,7 @@ from django.http import HttpRequest
 from rest_framework import status
 from adrf.decorators import api_view
 from rest_framework.response import Response
-from sentence.models import SentencePack
+from sentence.models import SentencePack, SentencePackLike
 from user.auth import login_code_to_user
 from user.models import GameUser
 
@@ -22,6 +22,8 @@ async def get_sentence_packs(request: HttpRequest):
             "name": sentence.name,
             "author": sentence.author.nickname if sentence.author else "Unknown",
             "original_author": sentence.original_author,
+            "total_likes": sentence.total_likes,
+            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
         }
         for sentence in sentences
     ]
@@ -40,6 +42,8 @@ async def get_sentence_packs_random(request: HttpRequest):
             "name": sentence.name,
             "author": sentence.author.nickname if sentence.author else "Unknown",
             "original_author": sentence.original_author,
+            "total_likes": sentence.total_likes,
+            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
         }
         for sentence in sentences
     ]
@@ -89,6 +93,8 @@ async def search_sentence_pack(request: HttpRequest):
                 "author": sentence.author.nickname if sentence.author else "Unknown",
                 "original_author": sentence.original_author,
                 "level": sentence.level,
+                "total_likes": sentence.total_likes,
+                "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
             }
             for sentence in sentences
         ],
@@ -135,6 +141,8 @@ async def get_sentence_game(request: HttpRequest, sentence_id: int):
             ),
             "original_author": sentence_pack.original_author,
             "sentences": sentence_pack.sentences.split("\r\n"),
+            "total_likes": sentence_pack.total_likes,
+            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence_pack).exists()
         },
         status=status.HTTP_200_OK,
     )
@@ -265,7 +273,6 @@ async def update_sentence_game_point(request: HttpRequest, sentence_pack_id: int
 
     return Response({"message": message}, status=status.HTTP_200_OK)
 
-
 @api_view(["GET"])
 async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
     if not sentence_id:
@@ -315,6 +322,46 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
                 for leaderboard in leaderboards
             ],
             **rank_data,
+            "total_likes": sentence_pack.total_likes,
+            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence_pack).exists()
         },
         status=status.HTTP_200_OK,
     )
+
+@api_view(["POST"])
+async def interact_like_sentence_pack(request: HttpRequest, sentence_id: int):
+    if not sentence_id:
+        return Response(
+            {"error": "문장 그룹 ID가 제공되지 않았습니다."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    login_code = request.headers.get("X-Login-Code", None)
+    if not login_code:
+        return Response(
+            {"error": "로그인 코드가 제공되지 않았습니다."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    user = await login_code_to_user(login_code)
+
+    try:
+        get_sentence_pack = sync_to_async(
+            lambda: SentencePack.objects.get(id=sentence_id)
+        )
+        sentence_pack = await get_sentence_pack()
+    except SentencePack.DoesNotExist:
+        return Response(
+            {"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND
+        )
+
+    like, created = await sync_to_async(
+        lambda: SentencePackLike.objects.get_or_create(user=user, pack=sentence_pack)
+    )()
+
+    if created:
+        message = "문장 그룹에 좋아요를 추가했습니다."
+    else:
+        await sync_to_async(like.delete)()
+        message = "문장 그룹의 좋아요를 취소했습니다."
+
+    return Response({"message": message}, status=status.HTTP_200_OK)
