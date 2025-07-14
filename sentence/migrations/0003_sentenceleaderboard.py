@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name="SentenceLeaderboard",
             fields=[
                 ("id", models.AutoField(primary_key=True, serialize=False)),
-                ("total_score", models.IntegerField(default=0)),
+                ("score", models.IntegerField(default=0)),
                 (
                     "player",
                     models.ForeignKey(

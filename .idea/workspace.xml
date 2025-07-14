@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Introduce `realtime` app with initial setup, async player matching, and endpoint integration into URL configuration. Refactor quoting style in `sentence` app for consistency.">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Refactor type hints in `models.py` and `views.py` for improved code clarity and maintainability">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +19,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -61,7 +61,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR_AND_PREVIEW&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;#5 on main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/yuchan/dev/sunrin/danso-backend&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -69,7 +69,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.toDoOptions&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -130,8 +130,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-PY-251.25410.122" />
-        <option value="bundled-python-sdk-880ecab49056-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.25410.122" />
+        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-PY-251.26094.141" />
+        <option value="bundled-python-sdk-9f8e2b94138c-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.26094.141" />
       </set>
     </attachedChunks>
   </component>
@@ -162,7 +162,19 @@
       <workItem from="1750202895371" duration="6198000" />
       <workItem from="1750218232734" duration="595000" />
       <workItem from="1750228568663" duration="5069000" />
-      <workItem from="1750274593557" duration="1429000" />
+      <workItem from="1750274593557" duration="16256000" />
+      <workItem from="1750329880450" duration="3187000" />
+      <workItem from="1750342855682" duration="3281000" />
+      <workItem from="1750520822435" duration="15000" />
+      <workItem from="1750643635675" duration="784000" />
+      <workItem from="1750653222439" duration="1479000" />
+      <workItem from="1750816296079" duration="645000" />
+      <workItem from="1751613087832" duration="18000" />
+      <workItem from="1751613130999" duration="4161000" />
+      <workItem from="1752107469289" duration="1710000" />
+      <workItem from="1752120833633" duration="1593000" />
+      <workItem from="1752139473901" duration="37000" />
+      <workItem from="1752465622540" duration="406000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -276,7 +288,127 @@
       <option name="project" value="LOCAL" />
       <updated>1750275428373</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Update Dockerfile to switch from `gunicorn` to Django's `runserver` for development purposes. Comment out previous production command.">
+      <option name="closed" value="true" />
+      <created>1750276035011</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1750276035011</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Remove `--insecure` flag from `runserver` command in Dockerfile to enhance development server configuration.">
+      <option name="closed" value="true" />
+      <created>1750276295666</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1750276295666</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Update Dockerfile to replace `uv` command with `python3` for running the development server.">
+      <option name="closed" value="true" />
+      <created>1750276459722</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1750276459722</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Remove `--noreload` flag from `runserver` command in Dockerfile to simplify development server behavior.">
+      <option name="closed" value="true" />
+      <created>1750276606666</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1750276606666</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Update Dockerfile to bind `runserver` to all IPs by specifying `0.0.0.0:8000`.">
+      <option name="closed" value="true" />
+      <created>1750276682646</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1750276682646</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Update Dockerfile to bind `runserver` to all IPs by specifying `0.0.0.0:8000`.">
+      <option name="closed" value="true" />
+      <created>1750277196255</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1750277196255</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Fix leaderboard score update by casting `score` to `int` in async view.">
+      <option name="closed" value="true" />
+      <created>1750295640569</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1750295640569</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Add `CSRF_TRUSTED_ORIGINS` configuration to `settings.py`.">
+      <option name="closed" value="true" />
+      <created>1750295830963</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1750295830963</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Refactor leaderboard logic to rename `total_score` to `score`, implement API documentation, and introduce `RealtimeRoomManager` for real-time game room management and matching.">
+      <option name="closed" value="true" />
+      <created>1750310271494</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1750310271494</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Enhance `RealtimeRoomManager` with a new `leave_room` method, improve player matching logic, and refactor API documentation to dynamically generate endpoints.">
+      <option name="closed" value="true" />
+      <created>1750311285923</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1750311285923</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Add player status management in `RealtimeRoomManager` to track progress, hearts, and last heartbeat. Refactor room initialization and improve handling for player state updates.">
+      <option name="closed" value="true" />
+      <created>1750313057522</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1750313057522</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Remove unused `update_user_game_status` method in `manager.py` and update default heart value in `views.py` to 5. Refactor related code for improved clarity and maintainability.">
+      <option name="closed" value="true" />
+      <created>1750314324173</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1750314324173</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Refactor authentication logic in `auth.py` to raise `AuthenticationFailed` for invalid login codes. Clean up formatting in `manager.py`, `urls.py`, and `views.py` for improved readability.">
+      <option name="closed" value="true" />
+      <created>1750335136459</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1750335136459</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Refactor `views.py` to improve query readability and update leaderboard score handling logic for better clarity and messaging.">
+      <option name="closed" value="true" />
+      <created>1750335377713</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1750335377713</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Refactor type hints in `models.py` and `views.py` for improved code clarity and maintainability">
+      <option name="closed" value="true" />
+      <created>1752108675460</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1752108675460</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -294,9 +426,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies." />
-    <MESSAGE value="Add Dockerfile for containerized application setup and update IntelliJ workspace configuration" />
-    <MESSAGE value="Update dependencies to use `psycopg2-binary` instead of `psycopg2` for improved compatibility and ease of installation" />
     <MESSAGE value="Add `djangorestframework` dependency to project configuration" />
     <MESSAGE value="Add `gunicorn` dependency for production and update configurations" />
     <MESSAGE value="Add `gunicorn` to general dependencies and configure `ALLOWED_HOSTS` for production" />
@@ -308,6 +437,20 @@
     <MESSAGE value="Remove `leaderboard` app and implement `user` and `sentence` apps with enhanced models, views, templates, and migrations." />
     <MESSAGE value="Add `level` field to `SentencePack`, implement new async views for `sentence` app, and refactor `user` authentication flow." />
     <MESSAGE value="Introduce `realtime` app with initial setup, async player matching, and endpoint integration into URL configuration. Refactor quoting style in `sentence` app for consistency." />
-    <option name="LAST_COMMIT_MESSAGE" value="Introduce `realtime` app with initial setup, async player matching, and endpoint integration into URL configuration. Refactor quoting style in `sentence` app for consistency." />
+    <MESSAGE value="Update Dockerfile to switch from `gunicorn` to Django's `runserver` for development purposes. Comment out previous production command." />
+    <MESSAGE value="Remove `--insecure` flag from `runserver` command in Dockerfile to enhance development server configuration." />
+    <MESSAGE value="Update Dockerfile to replace `uv` command with `python3` for running the development server." />
+    <MESSAGE value="Remove `--noreload` flag from `runserver` command in Dockerfile to simplify development server behavior." />
+    <MESSAGE value="Update Dockerfile to bind `runserver` to all IPs by specifying `0.0.0.0:8000`." />
+    <MESSAGE value="Fix leaderboard score update by casting `score` to `int` in async view." />
+    <MESSAGE value="Add `CSRF_TRUSTED_ORIGINS` configuration to `settings.py`." />
+    <MESSAGE value="Refactor leaderboard logic to rename `total_score` to `score`, implement API documentation, and introduce `RealtimeRoomManager` for real-time game room management and matching." />
+    <MESSAGE value="Enhance `RealtimeRoomManager` with a new `leave_room` method, improve player matching logic, and refactor API documentation to dynamically generate endpoints." />
+    <MESSAGE value="Add player status management in `RealtimeRoomManager` to track progress, hearts, and last heartbeat. Refactor room initialization and improve handling for player state updates." />
+    <MESSAGE value="Remove unused `update_user_game_status` method in `manager.py` and update default heart value in `views.py` to 5. Refactor related code for improved clarity and maintainability." />
+    <MESSAGE value="Refactor authentication logic in `auth.py` to raise `AuthenticationFailed` for invalid login codes. Clean up formatting in `manager.py`, `urls.py`, and `views.py` for improved readability." />
+    <MESSAGE value="Refactor `views.py` to improve query readability and update leaderboard score handling logic for better clarity and messaging." />
+    <MESSAGE value="Refactor type hints in `models.py` and `views.py` for improved code clarity and maintainability" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor type hints in `models.py` and `views.py` for improved code clarity and maintainability" />
   </component>
 </project>
