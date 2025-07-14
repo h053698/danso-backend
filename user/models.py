@@ -11,5 +11,9 @@ class GameUser(models.Model):
     email = models.EmailField(unique=True)
     login_code = models.CharField(max_length=255, blank=True, null=True)
 
+    class Meta:
+        verbose_name = "유저"
+        verbose_name_plural = "유저"
+
     def __str__(self):
         return f"GameUser(id={self.id}, nickname={self.nickname}, username={self.username})"

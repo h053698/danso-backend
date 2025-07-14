@@ -74,6 +74,8 @@ class SentenceLeaderboard(models.Model):
 
     class Meta:
         unique_together = ("sentence_pack", "player")
+        verbose_name = "리더보드값"
+        verbose_name_plural = "리더보드"
 
     def __str__(self):
         return f"Leaderboard: {self.sentence_pack.name} - {self.player.nickname}: {self.score}점"

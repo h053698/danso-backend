@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Refactor type hints in `models.py` and `views.py` for improved code clarity and maintainability">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Remove ordering from SentencePack and Like models for improved query flexibility">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/migrations/0005_rename_total_score_sentenceleaderboard_score.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/sentence/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -412,7 +415,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752108675460</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Remove ordering from SentencePack and Like models for improved query flexibility">
+      <option name="closed" value="true" />
+      <created>1752466534795</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1752466534795</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -430,7 +441,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add `djangorestframework` dependency to project configuration" />
     <MESSAGE value="Add `gunicorn` dependency for production and update configurations" />
     <MESSAGE value="Add `gunicorn` to general dependencies and configure `ALLOWED_HOSTS` for production" />
     <MESSAGE value="Update Dockerfile to optimize layer usage, add `uvicorn` dependencies for ASGI support, and configure production-ready server setup" />
@@ -455,6 +465,7 @@
     <MESSAGE value="Refactor authentication logic in `auth.py` to raise `AuthenticationFailed` for invalid login codes. Clean up formatting in `manager.py`, `urls.py`, and `views.py` for improved readability." />
     <MESSAGE value="Refactor `views.py` to improve query readability and update leaderboard score handling logic for better clarity and messaging." />
     <MESSAGE value="Refactor type hints in `models.py` and `views.py` for improved code clarity and maintainability" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor type hints in `models.py` and `views.py` for improved code clarity and maintainability" />
+    <MESSAGE value="Remove ordering from SentencePack and Like models for improved query flexibility" />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove ordering from SentencePack and Like models for improved query flexibility" />
   </component>
 </project>
