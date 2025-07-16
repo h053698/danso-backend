@@ -22,8 +22,8 @@ async def get_sentence_packs(request: HttpRequest):
             "name": sentence.name,
             "author": sentence.author.nickname if sentence.author else "Unknown",
             "original_author": sentence.original_author,
-            "total_likes": sentence.total_likes,
-            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
+            "total_likes": await sentence.get_total_likes(),
+            # "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
         }
         for sentence in sentences
     ]
@@ -42,8 +42,8 @@ async def get_sentence_packs_random(request: HttpRequest):
             "name": sentence.name,
             "author": sentence.author.nickname if sentence.author else "Unknown",
             "original_author": sentence.original_author,
-            "total_likes": sentence.total_likes,
-            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
+            "total_likes": await sentence.get_total_likes(),
+            # "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
         }
         for sentence in sentences
     ]
@@ -93,7 +93,7 @@ async def search_sentence_pack(request: HttpRequest):
                 "author": sentence.author.nickname if sentence.author else "Unknown",
                 "original_author": sentence.original_author,
                 "level": sentence.level,
-                "total_likes": sentence.total_likes,
+                "total_likes": await sentence.get_total_likes(),
                 "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
             }
             for sentence in sentences
@@ -141,8 +141,8 @@ async def get_sentence_game(request: HttpRequest, sentence_id: int):
             ),
             "original_author": sentence_pack.original_author,
             "sentences": sentence_pack.sentences.split("\r\n"),
-            "total_likes": sentence_pack.total_likes,
-            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence_pack).exists()
+            "total_likes": await sentence_pack.get_total_likes(),
+            # "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence_pack).exists()
         },
         status=status.HTTP_200_OK,
     )
@@ -322,8 +322,8 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
                 for leaderboard in leaderboards
             ],
             **rank_data,
-            "total_likes": sentence_pack.total_likes,
-            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence_pack).exists()
+            "total_likes": await sentence_pack.get_total_likes(),
+            "is_liked": SentencePackLike.objects.filter(user=user, pack=sentence_pack).exists()
         },
         status=status.HTTP_200_OK,
     )

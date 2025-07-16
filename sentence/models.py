@@ -1,5 +1,6 @@
 from django.db import models
 from rest_framework.relations import ManyRelatedField
+from asgiref.sync import sync_to_async
 
 from user.models import GameUser  # User 모델 import
 
@@ -23,10 +24,9 @@ class SentencePack(models.Model):
 
     level = models.CharField(max_length=1, choices=LEVEL_CHOICES)
     likes: ManyRelatedField["SentencePackLike"]
-
-    @property
-    def total_likes(self):
-        return self.likes.count()
+    
+    async def get_total_likes(self):
+        return await sync_to_async(self.likes.count)()
 
     class Meta:
         verbose_name = "문장세트"
@@ -49,7 +49,7 @@ class SentencePackLike(models.Model):
         SentencePack,
         on_delete=models.CASCADE,
         related_name='likes',
-        verbose_name="좋아요 받은 게시글"
+        verbose_name="좋아요 받은 문장세트"
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="좋아요 누른 시각")
 
