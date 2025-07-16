@@ -24,7 +24,10 @@ class SentencePack(models.Model):
     ]
 
     level = models.CharField(max_length=1, choices=LEVEL_CHOICES)
-    image_id = models.TextField(blank=True, null=True)
+    image_id = models.CharField(max_length=255, blank=True, null=True)
+    image_file = models.ImageField(
+        upload_to="sentence_pack_images/", blank=True, null=True
+    )
     likes: ManyRelatedField["SentencePackLike"]
 
     async def get_total_likes(self):

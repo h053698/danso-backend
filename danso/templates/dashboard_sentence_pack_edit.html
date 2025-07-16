@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Sentence Pack 수정</title>
+</head>
+<body>
+    <h1>Sentence Pack 수정</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>이름: <input type="text" name="name" value="{{ pack.name }}" required></label><br>
+        <label>원작자: <input type="text" name="original_author" value="{{ pack.original_author }}"></label><br>
+        <label>문장들(줄바꿈으로 구분):<br>
+            <textarea name="sentences" rows="6" cols="40" required>{{ pack.sentences }}</textarea>
+        </label><br>
+        <label>레벨:
+            <select name="level" required>
+                {% for code, label in LEVEL_CHOICES %}
+                    <option value="{{ code }}" {% if pack.level == code %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label><br>
+        <label>이미지 파일: <input type="file" name="image_file" accept="image/*"></label>
+        {% if pack.image_id %}
+            <br>현재 이미지: <img src="/image/{{ pack.image_id }}" alt="이미지" width="80"/>
+        {% endif %}<br>
+        <label>이미지 ID(선택): <input type="text" name="image_id" value="{{ pack.image_id }}"></label><br>
+        <button type="submit">수정</button>
+    </form>
+    <a href="/dashboard/">목록으로 돌아가기</a>
+</body>
+</html> 

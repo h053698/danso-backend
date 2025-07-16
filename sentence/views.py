@@ -1,13 +1,19 @@
 from typing import Callable, Coroutine, Any
 
 from asgiref.sync import sync_to_async
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse, Http404
 from rest_framework import status
 from adrf.decorators import api_view
 from rest_framework.response import Response
 from sentence.models import SentencePack, SentencePackLike
 from user.auth import login_code_to_user
 from user.models import GameUser
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import mimetypes
 
 
 @api_view(["GET"])
@@ -330,9 +336,11 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
             ],
             **rank_data,
             "total_likes": await sentence_pack.get_total_likes(),
-            "is_liked": SentencePackLike.objects.filter(
-                user=user, pack=sentence_pack
-            ).exists(),
+            "is_liked": await sync_to_async(
+                lambda: SentencePackLike.objects.filter(
+                    user=user, pack=sentence_pack
+                ).exists()
+            )(),
             "image_url": (
                 f"https://danso-cdn.thnos.app/sentence-image/{sentence_pack.image_id}"
                 if sentence_pack.image_id
@@ -380,3 +388,90 @@ async def interact_like_sentence_pack(request: HttpRequest, sentence_id: int):
         message = "문장 그룹의 좋아요를 취소했습니다."
 
     return Response({"message": message}, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@login_required(login_url="/admin/login/")
+def add_sentence_pack_dashboard(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        original_author = request.POST.get("original_author")
+        author = request.user
+        sentences = request.POST.get("sentences")
+        level = request.POST.get("level")
+        image_file = request.FILES.get("image_file")
+        image_id = request.POST.get("image_id")
+
+        pack = SentencePack.objects.create(
+            name=name,
+            original_author=original_author,
+            author=author,
+            sentences=sentences,
+            level=level,
+            image_id=image_id,
+            image_file=image_file,
+        )
+        return redirect("/dashboard/add-sentence-pack?success=1")
+
+    return render(
+        request,
+        "add_sentence_pack_dashboard.html",
+        {"LEVEL_CHOICES": SentencePack.LEVEL_CHOICES},
+    )
+
+
+@login_required(login_url="/admin/login/")
+def dashboard_sentence_pack_list(request):
+    packs = SentencePack.objects.all().select_related("author")
+    return render(request, "dashboard_sentence_pack_list.html", {"packs": packs})
+
+
+@login_required(login_url="/admin/login/")
+def dashboard_sentence_pack_edit(request, pk):
+    try:
+        pack = SentencePack.objects.get(pk=pk)
+    except SentencePack.DoesNotExist:
+        return redirect("dashboard_sentence_pack_list")
+    if request.method == "POST":
+        pack.name = request.POST.get("name")
+        pack.original_author = request.POST.get("original_author")
+        pack.sentences = request.POST.get("sentences")
+        pack.level = request.POST.get("level")
+        image_file = request.FILES.get("image_file")
+        image_id = request.POST.get("image_id")
+        if image_file:
+            pack.image_file = image_file
+        if image_id:
+            pack.image_id = image_id
+        pack.save()
+        return redirect("dashboard_sentence_pack_list")
+    return render(
+        request,
+        "dashboard_sentence_pack_edit.html",
+        {"pack": pack, "LEVEL_CHOICES": SentencePack.LEVEL_CHOICES},
+    )
+
+
+@login_required(login_url="/admin/login/")
+@require_http_methods(["POST"])
+def dashboard_sentence_pack_delete(request, pk):
+    try:
+        pack = SentencePack.objects.get(pk=pk)
+        pack.delete()
+    except SentencePack.DoesNotExist:
+        pass
+    return redirect("dashboard_sentence_pack_list")
+
+
+def serve_sentence_pack_image(request, image_id):
+    try:
+        pack = SentencePack.objects.get(image_id=image_id)
+        if not pack.image_file:
+            raise Http404()
+        image_path = pack.image_file.path
+        with open(image_path, "rb") as f:
+            image_data = f.read()
+        content_type, _ = mimetypes.guess_type(image_path)
+        return HttpResponse(image_data, content_type=content_type)
+    except (SentencePack.DoesNotExist, ValueError, FileNotFoundError):
+        raise Http404()

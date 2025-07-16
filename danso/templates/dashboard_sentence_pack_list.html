@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Sentence Pack 대시보드</title>
+</head>
+<body>
+    <h1>Sentence Pack 대시보드</h1>
+    <a href="/dashboard/add-sentence-pack">새 Sentence Pack 추가</a>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>이름</th>
+                <th>원작자</th>
+                <th>작성자</th>
+                <th>레벨</th>
+                <th>이미지</th>
+                <th>수정</th>
+                <th>삭제</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pack in packs %}
+            <tr>
+                <td>{{ pack.id }}</td>
+                <td>{{ pack.name }}</td>
+                <td>{{ pack.original_author }}</td>
+                <td>{{ pack.author.nickname }}</td>
+                <td>{{ pack.get_level_display }}</td>
+                <td>
+                    {% if pack.image_id %}
+                        <img src="/image/{{ pack.image_id }}" alt="이미지" width="80"/>
+                    {% else %}-{% endif %}
+                </td>
+                <td><a href="/dashboard/edit/{{ pack.id }}/">수정</a></td>
+                <td>
+                    <form method="post" action="/dashboard/delete/{{ pack.id }}/" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html> 

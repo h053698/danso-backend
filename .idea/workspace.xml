@@ -4,8 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Refactor views to improve async handling and readability; minor URL and formatting adjustments.">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Add `image_id` field to SentencePack model and update views to include image URL generation">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/danso/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/danso/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sentence/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentence/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +186,8 @@
       <workItem from="1752139473901" duration="37000" />
       <workItem from="1752465622540" duration="406000" />
       <workItem from="1752532395843" duration="19000" />
-      <workItem from="1752630000131" duration="4248000" />
+      <workItem from="1752630000131" duration="5411000" />
+      <workItem from="1752647312119" duration="3050000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -462,7 +469,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752633550448</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="Add `image_id` field to SentencePack model and update views to include image URL generation">
+      <option name="closed" value="true" />
+      <created>1752634710585</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1752634710585</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -480,7 +495,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Update `ALLOWED_HOSTS` configuration to include `.traefik.me` and standardize host entries." />
     <MESSAGE value="Update Dockerfile to run `collectstatic` during build and refine production server setup." />
     <MESSAGE value="Remove `leaderboard` app and implement `user` and `sentence` apps with enhanced models, views, templates, and migrations." />
     <MESSAGE value="Add `level` field to `SentencePack`, implement new async views for `sentence` app, and refactor `user` authentication flow." />
@@ -505,6 +519,7 @@
     <MESSAGE value="Add async handling for SentencePack likes, update related views, and register SentencePackLike in admin." />
     <MESSAGE value="Comment out `is_liked` field from SentencePack likes view." />
     <MESSAGE value="Refactor views to improve async handling and readability; minor URL and formatting adjustments." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor views to improve async handling and readability; minor URL and formatting adjustments." />
+    <MESSAGE value="Add `image_id` field to SentencePack model and update views to include image URL generation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add `image_id` field to SentencePack model and update views to include image URL generation" />
   </component>
 </project>

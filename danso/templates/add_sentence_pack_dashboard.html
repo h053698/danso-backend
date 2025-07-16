@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Sentence Pack 추가</title>
+</head>
+<body>
+    <h1>Sentence Pack 추가</h1>
+    {% if request.GET.success %}
+        <p style="color:green;">성공적으로 추가되었습니다!</p>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>이름: <input type="text" name="name" required></label><br>
+        <label>원작자: <input type="text" name="original_author"></label><br>
+        <label>문장들(줄바꿈으로 구분):<br>
+            <textarea name="sentences" rows="6" cols="40" required></textarea>
+        </label><br>
+        <label>레벨:
+            <select name="level" required>
+                {% for code, label in LEVEL_CHOICES %}
+                    <option value="{{ code }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label><br>
+        <label>이미지 파일: <input type="file" name="image_file" accept="image/*"></label><br>
+        <label>이미지 ID(선택): <input type="text" name="image_id"></label><br>
+        <button type="submit">추가</button>
+    </form>
+</body>
+</html> 

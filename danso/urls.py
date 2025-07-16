@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from danso.views import api_docs, api_root
 from sentence.views import (
@@ -10,6 +12,11 @@ from sentence.views import (
     get_sentence_packs_random,
     update_sentence_game_point,
     interact_like_sentence_pack,
+    add_sentence_pack_dashboard,
+    dashboard_sentence_pack_list,
+    dashboard_sentence_pack_edit,
+    dashboard_sentence_pack_delete,
+    serve_sentence_pack_image,
 )
 from user.views import (
     login_oauth_url,
@@ -61,4 +68,29 @@ urlpatterns = [
     ),
     path("realtime/game/<str:room_id>/missed", missed_word, name="realtime-game-join"),
     path("realtime/game/<str:room_id>/leave", leave_room, name="realtime-game-leave"),
+    path(
+        "dashboard/add-sentence-pack",
+        add_sentence_pack_dashboard,
+        name="add_sentence_pack_dashboard",
+    ),
+    path(
+        "dashboard/", dashboard_sentence_pack_list, name="dashboard_sentence_pack_list"
+    ),
+    path(
+        "dashboard/edit/<int:pk>/",
+        dashboard_sentence_pack_edit,
+        name="dashboard_sentence_pack_edit",
+    ),
+    path(
+        "dashboard/delete/<int:pk>/",
+        dashboard_sentence_pack_delete,
+        name="dashboard_sentence_pack_delete",
+    ),
+    path(
+        "image/<str:image_id>",
+        serve_sentence_pack_image,
+        name="serve_sentence_pack_image",
+    ),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
