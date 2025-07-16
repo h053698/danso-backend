@@ -61,26 +61,32 @@ async def search_sentence_pack(request: HttpRequest):
             status=status.HTTP_400_BAD_REQUEST,
         )
     if keyword:
-        get_keyword_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = sync_to_async(
-            lambda: list(
-                SentencePack.objects.select_related("author").filter(
-                    name__icontains=keyword
+        get_keyword_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = (
+            sync_to_async(
+                lambda: list(
+                    SentencePack.objects.select_related("author").filter(
+                        name__icontains=keyword
+                    )
                 )
             )
         )
         sentences = await get_keyword_filter()
     elif level:
-        get_level_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = sync_to_async(
-            lambda: list(
-                SentencePack.objects.select_related("author").filter(level=level)
+        get_level_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = (
+            sync_to_async(
+                lambda: list(
+                    SentencePack.objects.select_related("author").filter(level=level)
+                )
             )
         )
         sentences = await get_level_filter()
     elif author:
-        get_author_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = sync_to_async(
-            lambda: list(
-                SentencePack.objects.select_related("author").filter(
-                    author__nickname__icontains=author
+        get_author_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = (
+            sync_to_async(
+                lambda: list(
+                    SentencePack.objects.select_related("author").filter(
+                        author__nickname__icontains=author
+                    )
                 )
             )
         )
@@ -273,6 +279,7 @@ async def update_sentence_game_point(request: HttpRequest, sentence_pack_id: int
 
     return Response({"message": message}, status=status.HTTP_200_OK)
 
+
 @api_view(["GET"])
 async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
     if not sentence_id:
@@ -323,10 +330,13 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
             ],
             **rank_data,
             "total_likes": await sentence_pack.get_total_likes(),
-            "is_liked": SentencePackLike.objects.filter(user=user, pack=sentence_pack).exists()
+            "is_liked": SentencePackLike.objects.filter(
+                user=user, pack=sentence_pack
+            ).exists(),
         },
         status=status.HTTP_200_OK,
     )
+
 
 @api_view(["POST"])
 async def interact_like_sentence_pack(request: HttpRequest, sentence_id: int):

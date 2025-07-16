@@ -8,7 +8,8 @@ from sentence.views import (
     get_sentence_game,
     search_sentence_pack,
     get_sentence_packs_random,
-    update_sentence_game_point, interact_like_sentence_pack,
+    update_sentence_game_point,
+    interact_like_sentence_pack,
 )
 from user.views import (
     login_oauth_url,
@@ -40,7 +41,11 @@ urlpatterns = [
     path("sentences/search", search_sentence_pack, name="search-sentence-pack"),
     path("sentences/<int:sentence_id>", get_sentence_by_id, name="sentence-detail"),
     path("sentences/<int:sentence_id>/game", get_sentence_game, name="sentence-game"),
-    path("sentences/{int:sentence_pack_id}/interact-like", interact_like_sentence_pack, name="sentence-interact-like"),
+    path(
+        "sentences/{int:sentence_pack_id}/interact-like",
+        interact_like_sentence_pack,
+        name="sentence-interact-like",
+    ),
     path("login/oauth/", login_oauth_url, name="login-oauth-url"),
     path("login/callback", login_oauth_callback, name="login-oauth-callback"),
     path("login/result", login_view_render, name="login-result"),
