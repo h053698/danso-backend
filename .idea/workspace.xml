@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Add verbose names for SentencePack and GameUser models, and create SentencePackLike model with unique constraints">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentence/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentence/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/models.py" afterDir="false" />
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Add async handling for SentencePack likes, update related views, and register SentencePackLike in admin.">
       <change beforePath="$PROJECT_DIR$/sentence/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -183,7 +180,7 @@
       <workItem from="1752139473901" duration="37000" />
       <workItem from="1752465622540" duration="406000" />
       <workItem from="1752532395843" duration="19000" />
-      <workItem from="1752630000131" duration="2032000" />
+      <workItem from="1752630000131" duration="2167000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -433,7 +430,23 @@
       <option name="project" value="LOCAL" />
       <updated>1752466995691</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Add verbose names for GameUser and SentenceLeaderboard models">
+      <option name="closed" value="true" />
+      <created>1752632099304</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1752632099304</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Add async handling for SentencePack likes, update related views, and register SentencePackLike in admin.">
+      <option name="closed" value="true" />
+      <created>1752632107538</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1752632107538</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -451,8 +464,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add `gunicorn` to general dependencies and configure `ALLOWED_HOSTS` for production" />
-    <MESSAGE value="Update Dockerfile to optimize layer usage, add `uvicorn` dependencies for ASGI support, and configure production-ready server setup" />
     <MESSAGE value="Expose port `8000` in Dockerfile and configure `gunicorn` with `uvicorn` worker for ASGI support." />
     <MESSAGE value="Add `whitenoise` for static file management, update settings, and adjust `.gitignore`." />
     <MESSAGE value="Update `ALLOWED_HOSTS` configuration to include `.traefik.me` and standardize host entries." />
@@ -476,6 +487,8 @@
     <MESSAGE value="Refactor type hints in `models.py` and `views.py` for improved code clarity and maintainability" />
     <MESSAGE value="Remove ordering from SentencePack and Like models for improved query flexibility" />
     <MESSAGE value="Add verbose names for SentencePack and GameUser models, and create SentencePackLike model with unique constraints" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add verbose names for SentencePack and GameUser models, and create SentencePackLike model with unique constraints" />
+    <MESSAGE value="Add verbose names for GameUser and SentenceLeaderboard models" />
+    <MESSAGE value="Add async handling for SentencePack likes, update related views, and register SentencePackLike in admin." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add async handling for SentencePack likes, update related views, and register SentencePackLike in admin." />
   </component>
 </project>

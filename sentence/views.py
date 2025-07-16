@@ -94,7 +94,7 @@ async def search_sentence_pack(request: HttpRequest):
                 "original_author": sentence.original_author,
                 "level": sentence.level,
                 "total_likes": await sentence.get_total_likes(),
-                "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
+                # "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
             }
             for sentence in sentences
         ],
