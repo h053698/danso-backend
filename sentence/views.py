@@ -333,6 +333,11 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
             "is_liked": SentencePackLike.objects.filter(
                 user=user, pack=sentence_pack
             ).exists(),
+            "image_url": (
+                f"https://danso-cdn.thnos.app/sentence-image/{sentence_pack.image_id}"
+                if sentence_pack.image_id
+                else None
+            ),
         },
         status=status.HTTP_200_OK,
     )

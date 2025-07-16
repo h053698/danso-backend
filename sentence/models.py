@@ -4,6 +4,7 @@ from asgiref.sync import sync_to_async
 
 from user.models import GameUser  # User 모델 import
 
+
 class SentencePack(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -23,8 +24,9 @@ class SentencePack(models.Model):
     ]
 
     level = models.CharField(max_length=1, choices=LEVEL_CHOICES)
+    image_id = models.TextField(blank=True, null=True)
     likes: ManyRelatedField["SentencePackLike"]
-    
+
     async def get_total_likes(self):
         return await sync_to_async(self.likes.count)()
 
@@ -38,26 +40,29 @@ class SentencePack(models.Model):
     def __str__(self):
         return f"SentencePack(id={self.id}, name={self.name}, author={self.author.nickname if self.author else 'Unknown'})"
 
+
 class SentencePackLike(models.Model):
     user = models.ForeignKey(
         GameUser,
         on_delete=models.CASCADE,
-        related_name='likes_given',
-        verbose_name="좋아요 누른 사용자"
+        related_name="likes_given",
+        verbose_name="좋아요 누른 사용자",
     )
     pack = models.ForeignKey(
         SentencePack,
         on_delete=models.CASCADE,
-        related_name='likes',
-        verbose_name="좋아요 받은 문장세트"
+        related_name="likes",
+        verbose_name="좋아요 받은 문장세트",
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="좋아요 누른 시각")
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name="좋아요 누른 시각"
+    )
 
     def __str__(self):
         return f"{self.user.username} 님이 {self.pack.name} 에 좋아요"
 
     class Meta:
-        unique_together = ('user', 'pack')
+        unique_together = ("user", "pack")
         verbose_name = "좋아요"
         verbose_name_plural = "좋아요들"
 
