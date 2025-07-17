@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Remove `image_file` and `image_id` fields from SentencePack, add `image_url` for S3 integration, implement R2 upload handling, and update related views, templates, and dependencies.">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Add `history` and `now` fields to `GameUser` model, implement history management methods, and update views to handle SentencePack progression.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/danso/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentence/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentence/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -184,7 +182,7 @@
       <workItem from="1752465622540" duration="406000" />
       <workItem from="1752532395843" duration="19000" />
       <workItem from="1752630000131" duration="5411000" />
-      <workItem from="1752647312119" duration="11010000" />
+      <workItem from="1752647312119" duration="11525000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -490,7 +488,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752710957056</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Add `history` and `now` fields to `GameUser` model, implement history management methods, and update views to handle SentencePack progression.">
+      <option name="closed" value="true" />
+      <created>1752711900929</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1752711900929</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -508,7 +514,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add `level` field to `SentencePack`, implement new async views for `sentence` app, and refactor `user` authentication flow." />
     <MESSAGE value="Introduce `realtime` app with initial setup, async player matching, and endpoint integration into URL configuration. Refactor quoting style in `sentence` app for consistency." />
     <MESSAGE value="Update Dockerfile to switch from `gunicorn` to Django's `runserver` for development purposes. Comment out previous production command." />
     <MESSAGE value="Remove `--insecure` flag from `runserver` command in Dockerfile to enhance development server configuration." />
@@ -533,6 +538,7 @@
     <MESSAGE value="Add `image_id` field to SentencePack model and update views to include image URL generation" />
     <MESSAGE value="Add `image_file` field to SentencePack model, update associated templates, and add Pillow dependency." />
     <MESSAGE value="Remove `image_file` and `image_id` fields from SentencePack, add `image_url` for S3 integration, implement R2 upload handling, and update related views, templates, and dependencies." />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove `image_file` and `image_id` fields from SentencePack, add `image_url` for S3 integration, implement R2 upload handling, and update related views, templates, and dependencies." />
+    <MESSAGE value="Add `history` and `now` fields to `GameUser` model, implement history management methods, and update views to handle SentencePack progression." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add `history` and `now` fields to `GameUser` model, implement history management methods, and update views to handle SentencePack progression." />
   </component>
 </project>
