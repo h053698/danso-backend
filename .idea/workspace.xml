@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Fix URL pattern syntax for `sentence-interact-like` route in `danso/urls.py`.">
+    <list default="true" id="4578d62c-a842-49a4-b9b5-593ab466c20c" name="Changes" comment="Fix incorrect variable in URL pattern for `sentence-interact-like` route in `danso/urls.py`.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/danso/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/danso/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/user/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,7 +183,7 @@
       <workItem from="1752465622540" duration="406000" />
       <workItem from="1752532395843" duration="19000" />
       <workItem from="1752630000131" duration="5411000" />
-      <workItem from="1752647312119" duration="11626000" />
+      <workItem from="1752647312119" duration="12209000" />
     </task>
     <task id="LOCAL-00001" summary="Set up initial project structure with `sentence` and `leaderboard` apps, REST API views, PostgreSQL configuration, and updated dependencies.">
       <option name="closed" value="true" />
@@ -503,7 +505,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752712177550</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Fix incorrect variable in URL pattern for `sentence-interact-like` route in `danso/urls.py`.">
+      <option name="closed" value="true" />
+      <created>1752712270723</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1752712270723</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -521,7 +531,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Update Dockerfile to switch from `gunicorn` to Django's `runserver` for development purposes. Comment out previous production command." />
     <MESSAGE value="Remove `--insecure` flag from `runserver` command in Dockerfile to enhance development server configuration." />
     <MESSAGE value="Update Dockerfile to replace `uv` command with `python3` for running the development server." />
     <MESSAGE value="Remove `--noreload` flag from `runserver` command in Dockerfile to simplify development server behavior." />
@@ -546,6 +555,7 @@
     <MESSAGE value="Remove `image_file` and `image_id` fields from SentencePack, add `image_url` for S3 integration, implement R2 upload handling, and update related views, templates, and dependencies." />
     <MESSAGE value="Add `history` and `now` fields to `GameUser` model, implement history management methods, and update views to handle SentencePack progression." />
     <MESSAGE value="Fix URL pattern syntax for `sentence-interact-like` route in `danso/urls.py`." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix URL pattern syntax for `sentence-interact-like` route in `danso/urls.py`." />
+    <MESSAGE value="Fix incorrect variable in URL pattern for `sentence-interact-like` route in `danso/urls.py`." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix incorrect variable in URL pattern for `sentence-interact-like` route in `danso/urls.py`." />
   </component>
 </project>

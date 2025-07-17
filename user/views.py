@@ -5,6 +5,7 @@ from asgiref.sync import sync_to_async
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.shortcuts import redirect, render
 from adrf.decorators import api_view
+from django.views.decorators.csrf import csrf_exempt
 
 from danso import settings
 from user.auth import login_code_to_user
@@ -146,3 +147,67 @@ async def login_oauth_callback(request: HttpRequest):
         get_updated_user = sync_to_async(lambda: GameUser.objects.get(id=user.id))
         user = await get_updated_user()
     return redirect(f"/login/result?login_code={login_code}")
+
+
+@csrf_exempt
+async def profile_edit(request: HttpRequest):
+    if request.method == "POST":
+        login_code = request.POST.get("login_code")
+        if not login_code:
+            return render(
+                request,
+                "error_auth.html",
+                {"error_message": "세션이 만료되었거나 잘못된 인증값입니다."},
+            )
+
+        try:
+            user = await login_code_to_user(login_code)
+        except Exception:
+            return render(
+                request,
+                "error_auth.html",
+                {"error_message": "세션이 만료되었거나 잘못된 인증값입니다."},
+            )
+
+        # 프로필 정보 업데이트 (이메일 제외)
+        nickname = request.POST.get("nickname")
+        username = request.POST.get("username")
+
+        if nickname:
+            user.nickname = nickname
+        if username:
+            user.username = username
+
+        await sync_to_async(user.save)()
+
+        return redirect(f"/profile/edit?login_code={login_code}&success=1")
+
+    elif request.method == "GET":
+        login_code = request.GET.get("login_code")
+        if not login_code:
+            return render(
+                request,
+                "error_auth.html",
+                {"error_message": "세션이 만료되었거나 잘못된 인증값입니다."},
+            )
+
+        try:
+            user = await login_code_to_user(login_code)
+        except Exception:
+            return render(
+                request,
+                "error_auth.html",
+                {"error_message": "세션이 만료되었거나 잘못된 인증값입니다."},
+            )
+
+        return render(
+            request,
+            "profile_edit.html",
+            {
+                "user": user,
+                "login_code": login_code,
+                "success": request.GET.get("success"),
+            },
+        )
+    else:
+        return HttpResponse("허용되지 않은 접근입니다.", status=403)
