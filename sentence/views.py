@@ -7,7 +7,12 @@ from rest_framework import status
 from adrf.decorators import api_view
 from rest_framework.response import Response
 
-from danso.settings import R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT_URL, R2_BUCKET_NAME
+from danso.settings import (
+    R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY,
+    R2_ENDPOINT_URL,
+    R2_BUCKET_NAME,
+)
 from sentence.models import SentencePack, SentencePackLike
 from user.auth import login_code_to_user
 from django.shortcuts import render, redirect
@@ -283,6 +288,11 @@ async def update_sentence_game_point(request: HttpRequest, sentence_pack_id: int
     if created or leaderboard.score < new_score:
         leaderboard.score = new_score
         await sync_to_async(leaderboard.save)()
+        # 점수 업데이트 시 user history에 sentence_pack_id 추가
+        await sync_to_async(user.add_to_history)(sentence_pack_id)
+        # now를 None으로 설정 (다음 /stage 호출 시 새로운 SentencePack 선택)
+        await sync_to_async(lambda: setattr(user, "now", None))()
+        await sync_to_async(user.save)()
         message = "최고 점수가 업데이트되었습니다."
     else:
         message = "기존 최고 점수보다 낮아 업데이트되지 않았습니다."
@@ -345,11 +355,7 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
                     user=user, pack=sentence_pack
                 ).exists()
             )(),
-            "image_url": (
-                f"https://danso-cdn.thnos.app/sentence-image/{sentence_pack.image_id}"
-                if sentence_pack.image_id
-                else None
-            ),
+            "image_url": (sentence_pack.image_url if sentence_pack.image_url else None),
         },
         status=status.HTTP_200_OK,
     )
@@ -436,19 +442,34 @@ async def add_sentence_pack_dashboard(request):
             level=level,
             image_url=image_url,
         )
-        return redirect(f"/dashboard/add-sentence-pack?success=1&login_code={login_code}")
+        return redirect(
+            f"/dashboard/add-sentence-pack?success=1&login_code={login_code}"
+        )
     elif request.method == "GET":
         login_code = request.GET.get("login_code")
         if not login_code:
-            return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+            return render(
+                request,
+                "error_auth.html",
+                {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"},
+            )
         try:
             user = await login_code_to_user(login_code)
         except Exception:
-            return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+            return render(
+                request,
+                "error_auth.html",
+                {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"},
+            )
         return render(
             request,
             "add_sentence_pack_dashboard.html",
-            {"LEVEL_CHOICES": SentencePack.LEVEL_CHOICES, "login_user_nickname": user.nickname, "login_code": login_code, "success": request.GET.get("success")},
+            {
+                "LEVEL_CHOICES": SentencePack.LEVEL_CHOICES,
+                "login_user_nickname": user.nickname,
+                "login_code": login_code,
+                "success": request.GET.get("success"),
+            },
         )
     else:
         return HttpResponse("허용되지 않은 접근입니다.", status=403)
@@ -458,18 +479,36 @@ async def add_sentence_pack_dashboard(request):
 async def dashboard_sentence_pack_list(request):
     login_code = request.GET.get("login_code")
     if not login_code:
-        return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+        return render(
+            request,
+            "error_auth.html",
+            {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"},
+        )
     try:
         user = await login_code_to_user(login_code)
     except Exception:
-        return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
-    packs = await sync_to_async(lambda: list(SentencePack.objects.filter(author=user).select_related("author")))()
+        return render(
+            request,
+            "error_auth.html",
+            {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"},
+        )
+    packs = await sync_to_async(
+        lambda: list(SentencePack.objects.filter(author=user).select_related("author"))
+    )()
     # 각 pack의 total_likes 계산
     packs_with_likes = []
     for pack in packs:
         total_likes = await pack.get_total_likes()
         packs_with_likes.append({"pack": pack, "total_likes": total_likes})
-    return render(request, "dashboard_sentence_pack_list.html", {"packs": packs_with_likes, "login_user_nickname": user.nickname, "login_code": login_code})
+    return render(
+        request,
+        "dashboard_sentence_pack_list.html",
+        {
+            "packs": packs_with_likes,
+            "login_user_nickname": user.nickname,
+            "login_code": login_code,
+        },
+    )
 
 
 @csrf_exempt
@@ -481,7 +520,11 @@ async def dashboard_sentence_pack_edit(request, pk):
             return redirect("dashboard_sentence_pack_list")
         login_code = request.POST.get("login_code")
         if not login_code:
-            return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+            return render(
+                request,
+                "error_auth.html",
+                {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"},
+            )
         user = await login_code_to_user(login_code)
         pack.name = request.POST.get("name")
         pack.original_author = request.POST.get("original_author")
@@ -501,11 +544,19 @@ async def dashboard_sentence_pack_edit(request, pk):
     elif request.method == "GET":
         login_code = request.GET.get("login_code")
         if not login_code:
-            return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+            return render(
+                request,
+                "error_auth.html",
+                {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"},
+            )
         try:
             user = await login_code_to_user(login_code)
         except Exception:
-            return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+            return render(
+                request,
+                "error_auth.html",
+                {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"},
+            )
         try:
             pack = await sync_to_async(SentencePack.objects.get)(pk=pk)
         except SentencePack.DoesNotExist:
@@ -513,7 +564,13 @@ async def dashboard_sentence_pack_edit(request, pk):
         return render(
             request,
             "dashboard_sentence_pack_edit.html",
-            {"pack": pack, "LEVEL_CHOICES": SentencePack.LEVEL_CHOICES, "login_user_nickname": user.nickname, "login_code": login_code, "success": request.GET.get("success")},
+            {
+                "pack": pack,
+                "LEVEL_CHOICES": SentencePack.LEVEL_CHOICES,
+                "login_user_nickname": user.nickname,
+                "login_code": login_code,
+                "success": request.GET.get("success"),
+            },
         )
     else:
         return HttpResponse("허용되지 않은 접근입니다.", status=403)
@@ -523,7 +580,11 @@ async def dashboard_sentence_pack_edit(request, pk):
 async def dashboard_sentence_pack_delete(request, pk):
     login_code = request.GET.get("login_code")
     if not login_code:
-        return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+        return render(
+            request,
+            "error_auth.html",
+            {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"},
+        )
     try:
         pack = await sync_to_async(SentencePack.objects.get)(pk=pk)
         await sync_to_async(pack.delete)()
@@ -544,3 +605,88 @@ def serve_sentence_pack_image(request, image_id):
         return HttpResponse(image_data, content_type=content_type)
     except (SentencePack.DoesNotExist, ValueError, FileNotFoundError):
         raise Http404()
+
+
+@api_view(["GET"])
+async def get_stage(request: HttpRequest):
+    login_code = request.headers.get("X-Login-Code", None)
+    if not login_code:
+        return Response(
+            {"error": "로그인 코드가 제공되지 않았습니다."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    user = await login_code_to_user(login_code)
+
+    # history 가져오기
+    history_ids = await sync_to_async(user.get_history)()
+
+    # history에 있는 SentencePack들 조회
+    history_packs = []
+    if history_ids:
+        get_history_packs = sync_to_async(
+            lambda: list(
+                SentencePack.objects.filter(id__in=history_ids).select_related("author")
+            )
+        )
+        history_packs_raw = await get_history_packs()
+        for pack in history_packs_raw:
+            history_packs.append(
+                {
+                    "id": pack.id,
+                    "name": pack.name,
+                    "author": pack.author.nickname if pack.author else "Unknown",
+                    "original_author": pack.original_author,
+                    "level": pack.level,
+                    "total_likes": await pack.get_total_likes(),
+                    "image_url": pack.image_url,
+                }
+            )
+
+    # now가 없거나 현재 now가 history에 있으면 새로운 SentencePack 선택
+    if not user.now or user.now in history_ids:
+        # 아직 하지 않은 SentencePack 중 하나 선택
+        get_available_packs = sync_to_async(
+            lambda: list(
+                SentencePack.objects.exclude(id__in=history_ids).order_by("?")[:1]
+            )
+        )
+        available_packs = await get_available_packs()
+
+        if available_packs:
+            new_now = available_packs[0].id
+            await sync_to_async(lambda: setattr(user, "now", new_now))()
+            await sync_to_async(user.save)()
+        else:
+            new_now = None
+    else:
+        new_now = user.now
+
+    # now SentencePack 정보 가져오기
+    now_pack = None
+    if new_now:
+        try:
+            get_now_pack = sync_to_async(
+                lambda: SentencePack.objects.select_related("author").get(id=new_now)
+            )
+            now_pack_raw = await get_now_pack()
+            now_pack = {
+                "id": now_pack_raw.id,
+                "name": now_pack_raw.name,
+                "author": (
+                    now_pack_raw.author.nickname if now_pack_raw.author else "Unknown"
+                ),
+                "original_author": now_pack_raw.original_author,
+                "level": now_pack_raw.level,
+                "total_likes": await now_pack_raw.get_total_likes(),
+                "image_url": now_pack_raw.image_url,
+            }
+        except SentencePack.DoesNotExist:
+            now_pack = None
+
+    return Response(
+        {
+            "history": history_packs,
+            "now": now_pack,
+        },
+        status=status.HTTP_200_OK,
+    )

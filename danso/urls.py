@@ -12,6 +12,7 @@ from sentence.views import (
     get_sentence_packs_random,
     update_sentence_game_point,
     interact_like_sentence_pack,
+    get_stage,
     add_sentence_pack_dashboard,
     dashboard_sentence_pack_list,
     dashboard_sentence_pack_edit,
@@ -48,6 +49,7 @@ urlpatterns = [
     path("sentences/search", search_sentence_pack, name="search-sentence-pack"),
     path("sentences/<int:sentence_id>", get_sentence_by_id, name="sentence-detail"),
     path("sentences/<int:sentence_id>/game", get_sentence_game, name="sentence-game"),
+    path("stage/", get_stage, name="get-stage"),
     path(
         "sentences/{int:sentence_pack_id}/interact-like",
         interact_like_sentence_pack,
