@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>인증 오류</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f7f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .error-container {
+            max-width: 400px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 32px 28px;
+            text-align: center;
+        }
+        .error-icon {
+            font-size: 48px;
+            color: #ff5a5a;
+            margin-bottom: 16px;
+        }
+        .error-title {
+            color: #333;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+        .error-message {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        .close-btn {
+            background: #ff5a5a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .close-btn:hover {
+            background: #d81b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <div class="error-title">인증 오류</div>
+        <div class="error-message">{{ error_message }}</div>
+        <button class="close-btn" onclick="window.close();">창 닫기</button>
+    </div>
+</body>
+</html> 

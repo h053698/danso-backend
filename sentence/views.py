@@ -1,19 +1,23 @@
 from typing import Callable, Coroutine, Any
 
 from asgiref.sync import sync_to_async
+from django.conf import settings
 from django.http import HttpRequest, HttpResponse, Http404
 from rest_framework import status
 from adrf.decorators import api_view
 from rest_framework.response import Response
+
+from danso.settings import R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ENDPOINT_URL, R2_BUCKET_NAME
 from sentence.models import SentencePack, SentencePackLike
 from user.auth import login_code_to_user
-from user.models import GameUser
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 import mimetypes
+import boto3
+import uuid
+import os
 
 
 @api_view(["GET"])
@@ -390,77 +394,142 @@ async def interact_like_sentence_pack(request: HttpRequest, sentence_id: int):
     return Response({"message": message}, status=status.HTTP_200_OK)
 
 
+def upload_to_r2(file_obj, filename):
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=R2_ACCESS_KEY_ID,
+        aws_secret_access_key=R2_SECRET_ACCESS_KEY,
+        endpoint_url=R2_ENDPOINT_URL,
+    )
+    s3.upload_fileobj(
+        file_obj,
+        R2_BUCKET_NAME,
+        filename,
+        ExtraArgs={"ACL": "public-read", "ContentType": file_obj.content_type},
+    )
+    return f"https://danso-cdn.thnos.app/{filename}"
+
+
 @csrf_exempt
-@login_required(login_url="/admin/login/")
-def add_sentence_pack_dashboard(request):
+async def add_sentence_pack_dashboard(request):
     if request.method == "POST":
+        login_code = request.POST.get("login_code")
+        if not login_code:
+            return HttpResponse("로그인 코드가 필요합니다.", status=400)
+        user = await login_code_to_user(login_code)
         name = request.POST.get("name")
         original_author = request.POST.get("original_author")
-        author = request.user
         sentences = request.POST.get("sentences")
         level = request.POST.get("level")
         image_file = request.FILES.get("image_file")
-        image_id = request.POST.get("image_id")
-
-        pack = SentencePack.objects.create(
+        image_url = None
+        if image_file:
+            ext = os.path.splitext(image_file.name)[1]
+            rand = uuid.uuid4().hex[:8]
+            filename = f"sentence_pack_images/{rand}{ext}"
+            image_url = upload_to_r2(image_file, filename)
+        await sync_to_async(SentencePack.objects.create)(
             name=name,
             original_author=original_author,
-            author=author,
+            author=user,
             sentences=sentences,
             level=level,
-            image_id=image_id,
-            image_file=image_file,
+            image_url=image_url,
         )
-        return redirect("/dashboard/add-sentence-pack?success=1")
+        return redirect(f"/dashboard/add-sentence-pack?success=1&login_code={login_code}")
+    elif request.method == "GET":
+        login_code = request.GET.get("login_code")
+        if not login_code:
+            return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+        try:
+            user = await login_code_to_user(login_code)
+        except Exception:
+            return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+        return render(
+            request,
+            "add_sentence_pack_dashboard.html",
+            {"LEVEL_CHOICES": SentencePack.LEVEL_CHOICES, "login_user_nickname": user.nickname, "login_code": login_code, "success": request.GET.get("success")},
+        )
+    else:
+        return HttpResponse("허용되지 않은 접근입니다.", status=403)
 
-    return render(
-        request,
-        "add_sentence_pack_dashboard.html",
-        {"LEVEL_CHOICES": SentencePack.LEVEL_CHOICES},
-    )
 
-
-@login_required(login_url="/admin/login/")
-def dashboard_sentence_pack_list(request):
-    packs = SentencePack.objects.all().select_related("author")
-    return render(request, "dashboard_sentence_pack_list.html", {"packs": packs})
-
-
-@login_required(login_url="/admin/login/")
-def dashboard_sentence_pack_edit(request, pk):
+@csrf_exempt
+async def dashboard_sentence_pack_list(request):
+    login_code = request.GET.get("login_code")
+    if not login_code:
+        return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
     try:
-        pack = SentencePack.objects.get(pk=pk)
-    except SentencePack.DoesNotExist:
-        return redirect("dashboard_sentence_pack_list")
+        user = await login_code_to_user(login_code)
+    except Exception:
+        return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+    packs = await sync_to_async(lambda: list(SentencePack.objects.filter(author=user).select_related("author")))()
+    # 각 pack의 total_likes 계산
+    packs_with_likes = []
+    for pack in packs:
+        total_likes = await pack.get_total_likes()
+        packs_with_likes.append({"pack": pack, "total_likes": total_likes})
+    return render(request, "dashboard_sentence_pack_list.html", {"packs": packs_with_likes, "login_user_nickname": user.nickname, "login_code": login_code})
+
+
+@csrf_exempt
+async def dashboard_sentence_pack_edit(request, pk):
     if request.method == "POST":
+        try:
+            pack = await sync_to_async(SentencePack.objects.get)(pk=pk)
+        except SentencePack.DoesNotExist:
+            return redirect("dashboard_sentence_pack_list")
+        login_code = request.POST.get("login_code")
+        if not login_code:
+            return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+        user = await login_code_to_user(login_code)
         pack.name = request.POST.get("name")
         pack.original_author = request.POST.get("original_author")
         pack.sentences = request.POST.get("sentences")
         pack.level = request.POST.get("level")
         image_file = request.FILES.get("image_file")
-        image_id = request.POST.get("image_id")
+        image_url = None
         if image_file:
-            pack.image_file = image_file
-        if image_id:
-            pack.image_id = image_id
-        pack.save()
-        return redirect("dashboard_sentence_pack_list")
-    return render(
-        request,
-        "dashboard_sentence_pack_edit.html",
-        {"pack": pack, "LEVEL_CHOICES": SentencePack.LEVEL_CHOICES},
-    )
+            ext = os.path.splitext(image_file.name)[1]
+            rand = uuid.uuid4().hex[:8]
+            filename = f"sentence_pack_images/{rand}{ext}"
+            image_url = upload_to_r2(image_file, filename)
+        pack.image_url = image_url
+        pack.author = user
+        await sync_to_async(pack.save)()
+        return redirect(f"/dashboard/edit/{pk}/?login_code={login_code}&success=1")
+    elif request.method == "GET":
+        login_code = request.GET.get("login_code")
+        if not login_code:
+            return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+        try:
+            user = await login_code_to_user(login_code)
+        except Exception:
+            return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
+        try:
+            pack = await sync_to_async(SentencePack.objects.get)(pk=pk)
+        except SentencePack.DoesNotExist:
+            return redirect("dashboard_sentence_pack_list")
+        return render(
+            request,
+            "dashboard_sentence_pack_edit.html",
+            {"pack": pack, "LEVEL_CHOICES": SentencePack.LEVEL_CHOICES, "login_user_nickname": user.nickname, "login_code": login_code, "success": request.GET.get("success")},
+        )
+    else:
+        return HttpResponse("허용되지 않은 접근입니다.", status=403)
 
 
-@login_required(login_url="/admin/login/")
 @require_http_methods(["POST"])
-def dashboard_sentence_pack_delete(request, pk):
+async def dashboard_sentence_pack_delete(request, pk):
+    login_code = request.GET.get("login_code")
+    if not login_code:
+        return render(request, "error_auth.html", {"error_message": "세션이 만료되었거나 잘못된 인증값입니다"})
     try:
-        pack = SentencePack.objects.get(pk=pk)
-        pack.delete()
+        pack = await sync_to_async(SentencePack.objects.get)(pk=pk)
+        await sync_to_async(pack.delete)()
     except SentencePack.DoesNotExist:
         pass
-    return redirect("dashboard_sentence_pack_list")
+    return redirect(f"/dashboard/?login_code={login_code}")
 
 
 def serve_sentence_pack_image(request, image_id):

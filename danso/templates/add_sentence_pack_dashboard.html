@@ -2,30 +2,209 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Sentence Pack 추가</title>
+    <title>나만의 문장세트 추가</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f7f7fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 480px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 32px 28px 24px 28px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 28px;
+        }
+        form label {
+            display: block;
+            margin-bottom: 12px;
+            color: #222;
+            font-weight: 500;
+        }
+        input[type="text"], select, textarea, input[type="file"] {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 4px;
+            margin-bottom: 10px;
+            border: 1px solid #d0d0d7;
+            border-radius: 6px;
+            font-size: 15px;
+            background: #fafbfc;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+        }
+        button[type="submit"] {
+            width: 100%;
+            background: #4f8cff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 0;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: #2563d8;
+        }
+        .success {
+            color: #1ca64c;
+            text-align: center;
+            margin-bottom: 18px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Sentence Pack 추가</h1>
-    {% if request.GET.success %}
-        <p style="color:green;">성공적으로 추가되었습니다!</p>
-    {% endif %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label>이름: <input type="text" name="name" required></label><br>
-        <label>원작자: <input type="text" name="original_author"></label><br>
-        <label>문장들(줄바꿈으로 구분):<br>
-            <textarea name="sentences" rows="6" cols="40" required></textarea>
-        </label><br>
-        <label>레벨:
-            <select name="level" required>
-                {% for code, label in LEVEL_CHOICES %}
-                    <option value="{{ code }}">{{ label }}</option>
-                {% endfor %}
-            </select>
-        </label><br>
-        <label>이미지 파일: <input type="file" name="image_file" accept="image/*"></label><br>
-        <label>이미지 ID(선택): <input type="text" name="image_id"></label><br>
-        <button type="submit">추가</button>
-    </form>
+    <div class="container">
+        <h1>나만의 문장세트 추가</h1>
+        {% if login_user_nickname %}
+            <p style="text-align:center; color:#4f8cff; font-weight:bold; margin-bottom:18px;">{{ login_user_nickname }}로 로그인됨</p>
+        {% endif %}
+        {% if success %}
+            <p class="success">성공적으로 추가되었습니다!</p>
+            <div style="display:flex; gap:12px; justify-content:center; margin-bottom:18px;">
+                <button type="button" onclick="window.close();" style="background:#ff5a5a; color:#fff; border:none; border-radius:6px; padding:12px 18px; font-size:16px; font-weight:bold;">게임으로 돌아가기</button>
+                <a href="/dashboard/?login_code={{ login_code }}" style="background:#ff5a5a; color:#fff; border:none; border-radius:6px; padding:12px 18px; font-size:16px; font-weight:bold; text-decoration:none; display:inline-block;">대시보드로 이동</a>
+            </div>
+        {% else %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="login_code" value="{{ login_code }}" />
+                <label>이름: <input type="text" name="name" required></label>
+                <label>원작자: <input type="text" name="original_author"></label>
+                <label>문장들(줄바꿈으로 구분):<br>
+                    <textarea name="sentences" rows="6" cols="40" required></textarea>
+                </label>
+                <label>레벨:
+                    <select name="level" required>
+                        {% for code, label in LEVEL_CHOICES %}
+                            <option value="{{ code }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>이미지 파일: <input type="file" name="image_file" accept="image/*" id="image-input" onchange="openCropModal(this)"></label>
+                <div id="image-preview-container" style="display:none; margin:10px 0; max-width:400px;">
+                    <img id="image-preview" style="max-width:100%; max-height:400px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <p style="text-align:center; color:#666; font-size:14px; margin-top:8px;">선택된 이미지</p>
+                </div>
+                <!-- Crop Modal -->
+                <div id="crop-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000;">
+                    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:#fff; border-radius:12px; padding:24px; max-width:90%; max-height:90%; overflow:hidden;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                            <h3 style="margin:0; color:#333;">이미지 자르기</h3>
+                            <button onclick="closeCropModal()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#666;">×</button>
+                        </div>
+                        <div id="crop-container" style="max-width:600px; max-height:400px; overflow:hidden;">
+                            <img id="crop-image" style="max-width:100%; max-height:400px;">
+                        </div>
+                        <div style="display:flex; gap:12px; justify-content:center; margin-top:16px;">
+                            <button onclick="applyCrop()" style="background:#4f8cff; color:#fff; border:none; border-radius:6px; padding:10px 20px; font-size:14px; font-weight:bold;">확인</button>
+                            <button onclick="closeCropModal()" style="background:#666; color:#fff; border:none; border-radius:6px; padding:10px 20px; font-size:14px; font-weight:bold;">취소</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit">추가</button>
+            </form>
+        {% endif %}
+    </div>
+    <script>
+        let cropper = null;
+        let selectedFile = null;
+
+        function openCropModal(input) {
+            if (input.files && input.files[0]) {
+                selectedFile = input.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const img = document.getElementById('crop-image');
+                    img.src = e.target.result;
+                    
+                    // 기존 cropper가 있으면 제거
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    
+                    document.getElementById('crop-modal').style.display = 'block';
+                    
+                    // Cropper.js 초기화 - 정사각형 비율 고정
+                    cropper = new Cropper(img, {
+                        aspectRatio: 1, // 정사각형 비율 고정
+                        viewMode: 1, // 뷰포트 내에서만 crop 영역 이동 가능
+                        dragMode: 'move', // 드래그 모드를 move로 설정
+                        autoCropArea: 0.8, // 초기 crop 영역을 80%로 설정
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: false,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                    });
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+        }
+
+        function applyCrop() {
+            if (cropper) {
+                cropper.getCroppedCanvas({
+                    width: 400,
+                    height: 400,
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                }).toBlob(function(blob) {
+                    // 원본 파일명 기반으로 자른 파일명 생성
+                    const originalName = selectedFile.name;
+                    const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.'));
+                    const croppedFileName = nameWithoutExt + '_cropped.jpg';
+                    
+                    // Blob을 File 객체로 변환
+                    const file = new File([blob], croppedFileName, { type: 'image/jpeg' });
+                    
+                    // FileList 객체 생성 (폼에서 인식할 수 있도록)
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    
+                    // 원본 input을 새로운 파일로 교체
+                    document.getElementById('image-input').files = dataTransfer.files;
+                    
+                    // 미리보기에 자른 이미지 표시
+                    const previewImg = document.getElementById('image-preview');
+                    previewImg.src = URL.createObjectURL(blob);
+                    document.getElementById('image-preview-container').style.display = 'block';
+                    
+                    // 자른 이미지가 제대로 적용되었는지 확인
+                    console.log('Cropped image applied:', document.getElementById('image-input').files[0]);
+                    
+                    // 모달 닫기
+                    closeCropModal();
+                }, 'image/jpeg', 0.9);
+            }
+        }
+
+        function closeCropModal() {
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            document.getElementById('crop-modal').style.display = 'none';
+        }
+    </script>
 </body>
 </html> 

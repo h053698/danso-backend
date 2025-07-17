@@ -2,47 +2,144 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Sentence Pack 대시보드</title>
+    <title>나만의 문장세트 만들기</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f7f7fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 32px 28px 24px 28px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 28px;
+        }
+        .add-btn {
+            display: inline-block;
+            background: #4f8cff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 18px;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-bottom: 18px;
+            transition: background 0.2s;
+        }
+        .add-btn:hover {
+            background: #2563d8;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        th, td {
+            padding: 10px 8px;
+            text-align: center;
+        }
+        th {
+            background: #f0f4fa;
+            color: #222;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        tr:nth-child(even) {
+            background: #fafbfc;
+        }
+        tr:hover {
+            background: #eaf2ff;
+        }
+        .img-preview {
+            border-radius: 8px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+            max-width: 80px;
+            max-height: 80px;
+        }
+        .edit-link, .delete-btn {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            margin: 0 2px;
+        }
+        .edit-link {
+            background: #4f8cff;
+            color: #fff;
+            border: none;
+            transition: background 0.2s;
+        }
+        .edit-link:hover {
+            background: #2563d8;
+        }
+        .delete-btn {
+            background: #ff5a5a;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .delete-btn:hover {
+            background: #d81b1b;
+        }
+    </style>
 </head>
 <body>
-    <h1>Sentence Pack 대시보드</h1>
-    <a href="/dashboard/add-sentence-pack">새 Sentence Pack 추가</a>
-    <table border="1" cellpadding="5" cellspacing="0">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>이름</th>
-                <th>원작자</th>
-                <th>작성자</th>
-                <th>레벨</th>
-                <th>이미지</th>
-                <th>수정</th>
-                <th>삭제</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for pack in packs %}
-            <tr>
-                <td>{{ pack.id }}</td>
-                <td>{{ pack.name }}</td>
-                <td>{{ pack.original_author }}</td>
-                <td>{{ pack.author.nickname }}</td>
-                <td>{{ pack.get_level_display }}</td>
-                <td>
-                    {% if pack.image_id %}
-                        <img src="/image/{{ pack.image_id }}" alt="이미지" width="80"/>
-                    {% else %}-{% endif %}
-                </td>
-                <td><a href="/dashboard/edit/{{ pack.id }}/">수정</a></td>
-                <td>
-                    <form method="post" action="/dashboard/delete/{{ pack.id }}/" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="container">
+        <h1>나만의 문장세트 만들기</h1>
+        {% if login_user_nickname %}
+            <p style="text-align:center; color:#4f8cff; font-weight:bold; margin-bottom:18px;">{{ login_user_nickname }}로 로그인됨</p>
+        {% endif %}
+        <a class="add-btn" href="/dashboard/add-sentence-pack?login_code={{ login_code }}">새 문장세트 추가</a>
+        <div style="display:flex; gap:32px;">
+            <div style="flex:2;">
+                <table border="0" cellpadding="0" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>이름</th>
+                            <th>원작자</th>
+                            <th>레벨</th>
+                            <th>좋아요 수</th>
+                            <th>수정</th>
+                            <th>삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pack_data in packs %}
+                        <tr>
+                            <td>{{ pack_data.pack.id }}</td>
+                            <td>{{ pack_data.pack.name }}</td>
+                            <td>{{ pack_data.pack.original_author }}</td>
+                            <td>{{ pack_data.pack.get_level_display }}</td>
+                            <td>{{ pack_data.total_likes }}</td>
+                            <td><a class="edit-link" href="/dashboard/edit/{{ pack_data.pack.id }}/?login_code={{ login_code }}" target="_blank">수정</a></td>
+                            <td>
+                                <form method="post" action="/dashboard/delete/{{ pack_data.pack.id }}/?login_code={{ login_code }}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button class="delete-btn" type="submit" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- 인라인 수정 패널 및 관련 JS 제거 -->
+        </div>
+        <script id="sentences_json" type="application/json">{{ pack.sentences|escapejs }}</script>
+    </div>
 </body>
 </html> 

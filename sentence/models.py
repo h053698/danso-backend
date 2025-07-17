@@ -24,10 +24,8 @@ class SentencePack(models.Model):
     ]
 
     level = models.CharField(max_length=1, choices=LEVEL_CHOICES)
-    image_id = models.CharField(max_length=255, blank=True, null=True)
-    image_file = models.ImageField(
-        upload_to="sentence_pack_images/", blank=True, null=True
-    )
+    image_url = models.URLField(blank=True, null=True)  # S3/R2 업로드된 파일의 URL 저장
+    # image_id와 image_file 필드는 삭제
     likes: ManyRelatedField["SentencePackLike"]
 
     async def get_total_likes(self):
