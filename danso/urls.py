@@ -51,7 +51,7 @@ urlpatterns = [
     path("sentences/<int:sentence_id>/game", get_sentence_game, name="sentence-game"),
     path("stage/", get_stage, name="get-stage"),
     path(
-        "sentences/<int:sentence_pack_id>/interact-like",
+        "sentences/<int:sentence_id>/interact-like",
         interact_like_sentence_pack,
         name="sentence-interact-like",
     ),
