@@ -138,6 +138,7 @@ USE_TZ = True
 
 CSRF_TRUSTED_ORIGINS = [
     "https://danso-api.thnos.app",
+    "https://danso.bigbae.app",
 ]
 
 # Static files (CSS, JavaScript, Images)
