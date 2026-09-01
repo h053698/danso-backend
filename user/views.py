@@ -115,10 +115,15 @@ def login_view_render(request: HttpRequest):
 
 
 def frontend_redirect(request: HttpRequest):
-    """Redirect backend page paths to the frontend app preserving path+query."""
     from django.conf import settings as dj_settings
 
     frontend_url = getattr(dj_settings, "FRONTEND_URL", "https://danso.bigbae.app")
+    login_code = request.GET.get("login_code", None)
+
+    if login_code:
+        next_path = request.path
+        return redirect(f"{frontend_url}/auth/callback?login_code={login_code}&next={next_path}")
+
     return redirect(f"{frontend_url}{request.path}?{request.GET.urlencode()}")
 
 
