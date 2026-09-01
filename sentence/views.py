@@ -471,8 +471,15 @@ async def admin_set_default_image(request: HttpRequest):
     if not image_url:
         return Response({"error": "image_url required"}, status=status.HTTP_400_BAD_REQUEST)
 
-    updated = await sync_to_async(
-        lambda: SentencePack.objects.filter(image_url__isnull=True).update(image_url=image_url)
-        + SentencePack.objects.filter(image_url="").update(image_url=image_url)
-    )()
+    force = request.POST.get("force", "false").lower() == "true"
+
+    if force:
+        updated = await sync_to_async(
+            lambda: SentencePack.objects.all().update(image_url=image_url)
+        )()
+    else:
+        updated = await sync_to_async(
+            lambda: SentencePack.objects.filter(image_url__isnull=True).update(image_url=image_url)
+            + SentencePack.objects.filter(image_url="").update(image_url=image_url)
+        )()
     return Response({"updated": updated}, status=status.HTTP_200_OK)
