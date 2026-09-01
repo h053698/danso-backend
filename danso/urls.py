@@ -14,6 +14,7 @@ from sentence.views import (
     update_sentence_pack,
     delete_sentence_pack,
     upload_sentence_image,
+    admin_set_default_image,
 )
 from user.views import (
     login_oauth_url,
@@ -52,6 +53,7 @@ urlpatterns = [
     path("sentences/<int:sentence_id>/update", update_sentence_pack, name="sentence-update"),
     path("sentences/<int:sentence_id>/delete", delete_sentence_pack, name="sentence-delete"),
     path("sentences/<int:sentence_id>/upload-image", upload_sentence_image, name="sentence-upload-image"),
+    path("admin-api/set-default-image", admin_set_default_image, name="admin-set-default-image"),
     path("login/oauth/", login_oauth_url, name="login-oauth-url"),
     path("login/callback", login_oauth_callback, name="login-oauth-callback"),
     path("login/result", login_view_render, name="login-result"),

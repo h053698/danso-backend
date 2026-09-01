@@ -459,3 +459,20 @@ async def upload_sentence_image(request: HttpRequest, sentence_id: int):
     await sync_to_async(SentencePack.objects.filter(id=sentence_id).update)(image_url=image_url)
 
     return Response({"image_url": image_url}, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+async def admin_set_default_image(request: HttpRequest):
+    admin_key = request.headers.get("X-Admin-Key", None)
+    if admin_key != "danso2026admin":
+        return Response({"error": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    image_url = request.POST.get("image_url")
+    if not image_url:
+        return Response({"error": "image_url required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    updated = await sync_to_async(
+        lambda: SentencePack.objects.filter(image_url__isnull=True).update(image_url=image_url)
+        + SentencePack.objects.filter(image_url="").update(image_url=image_url)
+    )()
+    return Response({"updated": updated}, status=status.HTTP_200_OK)
