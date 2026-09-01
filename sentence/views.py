@@ -18,50 +18,48 @@ async def get_is_liked(user, pack) -> bool:
     )()
 
 
+def _serialize_packs(sentences, user):
+    """Build pack list in sync context (total_likes uses sync ORM)."""
+    result = []
+    for s in sentences:
+        result.append({
+            "id": s.id,
+            "name": s.name,
+            "author": s.author.nickname if s.author else "Unknown",
+            "original_author": s.original_author,
+            "total_likes": s.total_likes,
+            "is_liked": (
+                SentencePackLike.objects.filter(user=user, pack=s).exists()
+                if user and getattr(user, "pk", None) else False
+            ),
+        })
+    return result
+
+
 @api_view(["GET"])
 async def get_sentence_packs(request: HttpRequest):
-    get_sentences_all = sync_to_async(
-        lambda: list(SentencePack.objects.select_related("author").all())
-    )
-    sentences = await get_sentences_all()
-
     login_code = request.headers.get("X-Login-Code", None)
     user = await login_code_to_user(login_code) if login_code else None
 
-    sentences_data = []
-    for sentence in sentences:
-        sentences_data.append({
-            "id": sentence.id,
-            "name": sentence.name,
-            "author": sentence.author.nickname if sentence.author else "Unknown",
-            "original_author": sentence.original_author,
-            "total_likes": sentence.total_likes,
-            "is_liked": await get_is_liked(user, sentence),
-        })
-    return Response(sentences_data, status=status.HTTP_200_OK)
+    get_data = sync_to_async(
+        lambda: _serialize_packs(
+            list(SentencePack.objects.select_related("author").all()), user
+        )
+    )
+    return Response(await get_data(), status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
 async def get_sentence_packs_random(request: HttpRequest):
-    get_sentences_random = sync_to_async(
-        lambda: list(SentencePack.objects.select_related("author").order_by("?")[:10])
-    )
-    sentences = await get_sentences_random()
-
     login_code = request.headers.get("X-Login-Code", None)
     user = await login_code_to_user(login_code) if login_code else None
 
-    sentences_data = []
-    for sentence in sentences:
-        sentences_data.append({
-            "id": sentence.id,
-            "name": sentence.name,
-            "author": sentence.author.nickname if sentence.author else "Unknown",
-            "original_author": sentence.original_author,
-            "total_likes": sentence.total_likes,
-            "is_liked": await get_is_liked(user, sentence),
-        })
-    return Response(sentences_data, status=status.HTTP_200_OK)
+    get_data = sync_to_async(
+        lambda: _serialize_packs(
+            list(SentencePack.objects.select_related("author").order_by("?")[:10]), user
+        )
+    )
+    return Response(await get_data(), status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -99,18 +97,24 @@ async def search_sentence_pack(request: HttpRequest):
     login_code = request.headers.get("X-Login-Code", None)
     user = await login_code_to_user(login_code) if login_code else None
 
-    result = []
-    for sentence in sentences:
-        result.append({
-            "id": sentence.id,
-            "name": sentence.name,
-            "author": sentence.author.nickname if sentence.author else "Unknown",
-            "original_author": sentence.original_author,
-            "level": sentence.level,
-            "total_likes": sentence.total_likes,
-            "is_liked": await get_is_liked(user, sentence),
-        })
-    return Response(result, status=status.HTTP_200_OK)
+    get_data = sync_to_async(
+        lambda: [
+            {
+                "id": s.id,
+                "name": s.name,
+                "author": s.author.nickname if s.author else "Unknown",
+                "original_author": s.original_author,
+                "level": s.level,
+                "total_likes": s.total_likes,
+                "is_liked": (
+                    SentencePackLike.objects.filter(user=user, pack=s).exists()
+                    if user and getattr(user, "pk", None) else False
+                ),
+            }
+            for s in sentences
+        ]
+    )
+    return Response(await get_data(), status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -211,18 +215,21 @@ async def get_sentence_game(request: HttpRequest, sentence_id: int):
     login_code = request.headers.get("X-Login-Code", None)
     user = await login_code_to_user(login_code) if login_code else None
 
-    return Response(
-        {
+    serialize = sync_to_async(
+        lambda: {
             "id": sentence_pack.id,
             "name": sentence_pack.name,
             "author": sentence_pack.author.nickname if sentence_pack.author else "알 수 없음",
             "original_author": sentence_pack.original_author,
             "sentences": sentence_pack.sentences.split("\r\n"),
             "total_likes": sentence_pack.total_likes,
-            "is_liked": await get_is_liked(user, sentence_pack),
-        },
-        status=status.HTTP_200_OK,
+            "is_liked": (
+                SentencePackLike.objects.filter(user=user, pack=sentence_pack).exists()
+                if user and getattr(user, "pk", None) else False
+            ),
+        }
     )
+    return Response(await serialize(), status=status.HTTP_200_OK)
 
 
 async def get_user_rank_data(sentence_pack: SentencePack, user):
@@ -346,8 +353,8 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
     leaderboards = await get_leaderboard_data(sentence_pack)
     rank_data = await get_user_rank_data(sentence_pack, user)
 
-    return Response(
-        {
+    serialize = sync_to_async(
+        lambda: {
             "id": sentence_pack.id,
             "name": sentence_pack.name,
             "author": sentence_pack.author.nickname if sentence_pack.author else "알 수 없음",
@@ -361,10 +368,13 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
             ],
             **rank_data,
             "total_likes": sentence_pack.total_likes,
-            "is_liked": await get_is_liked(user, sentence_pack),
-        },
-        status=status.HTTP_200_OK,
+            "is_liked": (
+                SentencePackLike.objects.filter(user=user, pack=sentence_pack).exists()
+                if user and getattr(user, "pk", None) else False
+            ),
+        }
     )
+    return Response(await serialize(), status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
