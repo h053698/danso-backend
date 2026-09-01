@@ -159,8 +159,11 @@ GOOGLE_REDIRECT_URI = env("GOOGLE_REDIRECT_URI")
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",  # 기본 메모리 캐시
-        "LOCATION": "unique-snowflake",  # 식별자
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": env("REDIS_URL", default="redis://localhost:6379/0"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
     }
 }
 

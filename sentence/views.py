@@ -78,16 +78,12 @@ async def search_sentence_pack(request: HttpRequest):
     if keyword:
         get_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = sync_to_async(
             lambda: list(
-                SentencePack.objects.select_related("author").filter(
-                    name__icontains=keyword
-                )
+                SentencePack.objects.select_related("author").filter(name__icontains=keyword)
             )
         )
     elif level:
         get_filter = sync_to_async(
-            lambda: list(
-                SentencePack.objects.select_related("author").filter(level=level)
-            )
+            lambda: list(SentencePack.objects.select_related("author").filter(level=level))
         )
     else:
         get_filter = sync_to_async(
@@ -117,6 +113,79 @@ async def search_sentence_pack(request: HttpRequest):
     return Response(result, status=status.HTTP_200_OK)
 
 
+@api_view(["POST"])
+async def create_sentence_pack(request: HttpRequest):
+    login_code = request.headers.get("X-Login-Code", None)
+    if not login_code:
+        return Response({"error": "로그인 코드가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
+    user = await login_code_to_user(login_code)
+
+    name = request.POST.get("name")
+    sentences = request.POST.get("sentences")
+    level = request.POST.get("level", "C")
+    original_author = request.POST.get("original_author", "")
+
+    if not name or not sentences:
+        return Response({"error": "name과 sentences는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if level not in ("A", "B", "C", "D", "E"):
+        return Response({"error": "level은 A~E 중 하나여야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+    pack = await sync_to_async(SentencePack.objects.create)(
+        name=name,
+        sentences=sentences,
+        level=level,
+        original_author=original_author,
+        author=user,
+    )
+    return Response({"id": pack.id, "name": pack.name}, status=status.HTTP_201_CREATED)
+
+
+@api_view(["PUT"])
+async def update_sentence_pack(request: HttpRequest, sentence_id: int):
+    login_code = request.headers.get("X-Login-Code", None)
+    if not login_code:
+        return Response({"error": "로그인 코드가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
+    user = await login_code_to_user(login_code)
+
+    try:
+        pack = await sync_to_async(SentencePack.objects.select_related("author").get)(id=sentence_id)
+    except SentencePack.DoesNotExist:
+        return Response({"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND)
+
+    if pack.author_id != user.id:
+        return Response({"error": "수정 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+
+    pack.name = request.POST.get("name", pack.name)
+    pack.sentences = request.POST.get("sentences", pack.sentences)
+    pack.original_author = request.POST.get("original_author", pack.original_author)
+    level = request.POST.get("level", pack.level)
+    if level not in ("A", "B", "C", "D", "E"):
+        return Response({"error": "level은 A~E 중 하나여야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
+    pack.level = level
+    await sync_to_async(pack.save)()
+    return Response({"id": pack.id, "name": pack.name}, status=status.HTTP_200_OK)
+
+
+@api_view(["DELETE"])
+async def delete_sentence_pack(request: HttpRequest, sentence_id: int):
+    login_code = request.headers.get("X-Login-Code", None)
+    if not login_code:
+        return Response({"error": "로그인 코드가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
+    user = await login_code_to_user(login_code)
+
+    try:
+        pack = await sync_to_async(SentencePack.objects.get)(id=sentence_id)
+    except SentencePack.DoesNotExist:
+        return Response({"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND)
+
+    if pack.author_id != user.id:
+        return Response({"error": "삭제 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+
+    await sync_to_async(pack.delete)()
+    return Response({"message": "삭제되었습니다."}, status=status.HTTP_200_OK)
+
+
 async def get_leaderboard_data(sentence_pack: SentencePack):
     get_all_leaderboards = sync_to_async(
         lambda: list(
@@ -130,20 +199,14 @@ async def get_leaderboard_data(sentence_pack: SentencePack):
 @api_view(["GET"])
 async def get_sentence_game(request: HttpRequest, sentence_id: int):
     if not sentence_id:
-        return Response(
-            {"error": "문장 그룹 ID가 제공되지 않았습니다."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response({"error": "문장 그룹 ID가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        get_sentence_pack = sync_to_async(
-            lambda: SentencePack.objects.select_related("author").get(id=sentence_id)
-        )
-        sentence_pack = await get_sentence_pack()
+        sentence_pack = await sync_to_async(
+            SentencePack.objects.select_related("author").get
+        )(id=sentence_id)
     except SentencePack.DoesNotExist:
-        return Response(
-            {"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND
-        )
+        return Response({"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND)
 
     login_code = request.headers.get("X-Login-Code", None)
     user = await login_code_to_user(login_code) if login_code else None
@@ -167,14 +230,10 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
         lambda: sentence_pack.leaderboards.filter(player=user).first()
     )
     get_all_ranks = sync_to_async(
-        lambda: list(
-            sentence_pack.leaderboards.order_by("-score").values_list("score", flat=True)
-        )
+        lambda: list(sentence_pack.leaderboards.order_by("-score").values_list("score", flat=True))
     )
     get_top5_players = sync_to_async(
-        lambda: list(
-            sentence_pack.leaderboards.order_by("-score").values_list("player_id", flat=True)[:5]
-        )
+        lambda: list(sentence_pack.leaderboards.order_by("-score").values_list("player_id", flat=True)[:5])
     )
 
     user_leaderboard = await get_leaderboard()
@@ -234,35 +293,23 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
 @api_view(["POST"])
 async def update_sentence_game_point(request: HttpRequest, sentence_pack_id: int):
     if not sentence_pack_id:
-        return Response(
-            {"error": "문장 그룹 ID가 제공되지 않았습니다."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response({"error": "문장 그룹 ID가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     login_code = request.headers.get("X-Login-Code", None)
     if not login_code:
-        return Response(
-            {"error": "로그인 코드가 제공되지 않았습니다."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response({"error": "로그인 코드가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
     user = await login_code_to_user(login_code)
 
     try:
-        get_sentence_pack = sync_to_async(
-            lambda: SentencePack.objects.select_related("author").get(id=sentence_pack_id)
-        )
-        sentence_pack = await get_sentence_pack()
+        sentence_pack = await sync_to_async(
+            SentencePack.objects.select_related("author").get
+        )(id=sentence_pack_id)
     except SentencePack.DoesNotExist:
-        return Response(
-            {"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND
-        )
+        return Response({"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND)
 
     score = request.POST.get("score", None)
     if score is None:
-        return Response(
-            {"error": "점수가 제공되지 않았습니다."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response({"error": "점수가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     leaderboard, created = await sync_to_async(
         lambda: sentence_pack.leaderboards.get_or_create(player=user)
@@ -282,28 +329,19 @@ async def update_sentence_game_point(request: HttpRequest, sentence_pack_id: int
 @api_view(["GET"])
 async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
     if not sentence_id:
-        return Response(
-            {"error": "문장 그룹 ID가 제공되지 않았습니다."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response({"error": "문장 그룹 ID가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     login_code = request.headers.get("X-Login-Code", None)
     if not login_code:
-        return Response(
-            {"error": "로그인 코드가 제공되지 않았습니다."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response({"error": "로그인 코드가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
     user = await login_code_to_user(login_code)
 
     try:
-        get_sentence_pack = sync_to_async(
-            lambda: SentencePack.objects.select_related("author").get(id=sentence_id)
-        )
-        sentence_pack = await get_sentence_pack()
+        sentence_pack = await sync_to_async(
+            SentencePack.objects.select_related("author").get
+        )(id=sentence_id)
     except SentencePack.DoesNotExist:
-        return Response(
-            {"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND
-        )
+        return Response({"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND)
 
     leaderboards = await get_leaderboard_data(sentence_pack)
     rank_data = await get_user_rank_data(sentence_pack, user)
@@ -332,28 +370,17 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
 @api_view(["POST"])
 async def interact_like_sentence_pack(request: HttpRequest, sentence_id: int):
     if not sentence_id:
-        return Response(
-            {"error": "문장 그룹 ID가 제공되지 않았습니다."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response({"error": "문장 그룹 ID가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
     login_code = request.headers.get("X-Login-Code", None)
     if not login_code:
-        return Response(
-            {"error": "로그인 코드가 제공되지 않았습니다."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return Response({"error": "로그인 코드가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
     user = await login_code_to_user(login_code)
 
     try:
-        get_sentence_pack = sync_to_async(
-            lambda: SentencePack.objects.get(id=sentence_id)
-        )
-        sentence_pack = await get_sentence_pack()
+        sentence_pack = await sync_to_async(SentencePack.objects.get)(id=sentence_id)
     except SentencePack.DoesNotExist:
-        return Response(
-            {"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND
-        )
+        return Response({"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND)
 
     like, created = await sync_to_async(
         lambda: SentencePackLike.objects.get_or_create(user=user, pack=sentence_pack)
