@@ -20,6 +20,8 @@ from user.views import (
     login_view_render,
     user_info,
     user_logout,
+    user_update_nickname,
+    frontend_redirect,
 )
 from realtime.views import (
     match_player,
@@ -53,6 +55,8 @@ urlpatterns = [
     path("login/result", login_view_render, name="login-result"),
     path("user/me", user_info, name="login-view"),
     path("user/logout", user_logout, name="user-logout"),
+    path("user/nickname", user_update_nickname, name="user-nickname"),
+    path("profile/edit", frontend_redirect, name="frontend-profile-edit"),
     path("realtime/match/player", match_player, name="match-player"),
     path("realtime/match/status", check_match_status, name="match-status"),
     path("realtime/match/join", join_room, name="join-match"),

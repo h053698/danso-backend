@@ -112,6 +112,35 @@ def login_view_render(request: HttpRequest):
     return render(request, "success_login.html", {"login_code": login_code})
 
 
+def frontend_redirect(request: HttpRequest):
+    """Redirect backend page paths to the frontend app preserving path+query."""
+    from django.conf import settings as dj_settings
+
+    frontend_url = getattr(dj_settings, "FRONTEND_URL", "https://danso.bigbae.app")
+    return redirect(f"{frontend_url}{request.path}?{request.GET.urlencode()}")
+
+
+@api_view(["POST"])
+async def user_update_nickname(request: HttpRequest):
+    login_code = request.headers.get("X-Login-Code", None)
+    if not login_code:
+        return JsonResponse({"error": "Login code not provided"}, status=400)
+
+    user = await login_code_to_user(login_code)
+    if isinstance(user, HttpResponse):
+        return user
+
+    nickname = request.POST.get("nickname", None)
+    if not nickname or not nickname.strip():
+        return JsonResponse({"error": "Nickname is required"}, status=400)
+
+    update_user = sync_to_async(
+        lambda: GameUser.objects.filter(id=user.id).update(nickname=nickname.strip())
+    )
+    await update_user()
+    return JsonResponse({"message": "Nickname updated", "nickname": nickname.strip()})
+
+
 @api_view(["GET"])
 async def login_oauth_callback(request: HttpRequest):
     code = request.GET.get("code")

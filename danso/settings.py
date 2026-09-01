@@ -156,6 +156,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = env("GOOGLE_CLIENT_SECRET")
 GOOGLE_REDIRECT_URI = env("GOOGLE_REDIRECT_URI")
+FRONTEND_URL = env("FRONTEND_URL", default="https://danso.bigbae.app")
 
 CACHES = {
     "default": {
@@ -171,6 +172,9 @@ CORS_ORIGIN_WHITELIST = (
     "https://danso.thnos.app",
     "http://danso.thnos.app",
     "http://localhost:5500",
+    "https://danso.bigbae.app",
+    "http://danso.bigbae.app",
+    "https://danso-frontend-thqk.vercel.app",
 )
 
 from corsheaders.defaults import default_headers
