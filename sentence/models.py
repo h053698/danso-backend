@@ -31,7 +31,7 @@ class SentencePack(models.Model):
     class Meta:
         verbose_name = "문장세트"
         verbose_name_plural = "문장세트들"
-        ordering = ['-created_at']
+        ordering = ['-id']
 
     def get_level_display_korean(self):
         return dict(self.LEVEL_CHOICES).get(self.level, "")
