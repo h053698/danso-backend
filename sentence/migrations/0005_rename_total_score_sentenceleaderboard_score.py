@@ -10,9 +10,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name="sentenceleaderboard",
-            old_name="total_score",
-            new_name="score",
-        ),
+        # field was already named 'score' in 0003, no-op for fresh installs
     ]
