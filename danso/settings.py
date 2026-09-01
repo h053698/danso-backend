@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "user.apps.UserConfig",
     "sentence.apps.SentenceConfig",
+    "realtime.apps.RealtimeConfig",
 ]
 
 MIDDLEWARE = [

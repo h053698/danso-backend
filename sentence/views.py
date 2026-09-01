@@ -10,23 +10,34 @@ from user.auth import login_code_to_user
 from user.models import GameUser
 
 
+async def get_is_liked(user, pack) -> bool:
+    if not user or not hasattr(user, 'pk') or user.pk is None:
+        return False
+    return await sync_to_async(
+        lambda: SentencePackLike.objects.filter(user=user, pack=pack).exists()
+    )()
+
+
 @api_view(["GET"])
 async def get_sentence_packs(request: HttpRequest):
     get_sentences_all = sync_to_async(
         lambda: list(SentencePack.objects.select_related("author").all())
     )
     sentences = await get_sentences_all()
-    sentences_data = [
-        {
+
+    login_code = request.headers.get("X-Login-Code", None)
+    user = await login_code_to_user(login_code) if login_code else None
+
+    sentences_data = []
+    for sentence in sentences:
+        sentences_data.append({
             "id": sentence.id,
             "name": sentence.name,
             "author": sentence.author.nickname if sentence.author else "Unknown",
             "original_author": sentence.original_author,
             "total_likes": sentence.total_likes,
-            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
-        }
-        for sentence in sentences
-    ]
+            "is_liked": await get_is_liked(user, sentence),
+        })
     return Response(sentences_data, status=status.HTTP_200_OK)
 
 
@@ -36,17 +47,20 @@ async def get_sentence_packs_random(request: HttpRequest):
         lambda: list(SentencePack.objects.select_related("author").order_by("?")[:10])
     )
     sentences = await get_sentences_random()
-    sentences_data = [
-        {
+
+    login_code = request.headers.get("X-Login-Code", None)
+    user = await login_code_to_user(login_code) if login_code else None
+
+    sentences_data = []
+    for sentence in sentences:
+        sentences_data.append({
             "id": sentence.id,
             "name": sentence.name,
             "author": sentence.author.nickname if sentence.author else "Unknown",
             "original_author": sentence.original_author,
             "total_likes": sentence.total_likes,
-            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
-        }
-        for sentence in sentences
-    ]
+            "is_liked": await get_is_liked(user, sentence),
+        })
     return Response(sentences_data, status=status.HTTP_200_OK)
 
 
@@ -60,46 +74,47 @@ async def search_sentence_pack(request: HttpRequest):
             {"error": "검색어, 레벨 또는 저자를 제공해야 합니다."},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
     if keyword:
-        get_keyword_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = sync_to_async(
+        get_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = sync_to_async(
             lambda: list(
                 SentencePack.objects.select_related("author").filter(
                     name__icontains=keyword
                 )
             )
         )
-        sentences = await get_keyword_filter()
     elif level:
-        get_level_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = sync_to_async(
+        get_filter = sync_to_async(
             lambda: list(
                 SentencePack.objects.select_related("author").filter(level=level)
             )
         )
-        sentences = await get_level_filter()
-    elif author:
-        get_author_filter: Callable[..., Coroutine[Any, Any, list[SentencePack]]] = sync_to_async(
+    else:
+        get_filter = sync_to_async(
             lambda: list(
                 SentencePack.objects.select_related("author").filter(
                     author__nickname__icontains=author
                 )
             )
         )
-        sentences: list[SentencePack] = await get_author_filter()
-    return Response(
-        [
-            {
-                "id": sentence.id,
-                "name": sentence.name,
-                "author": sentence.author.nickname if sentence.author else "Unknown",
-                "original_author": sentence.original_author,
-                "level": sentence.level,
-                "total_likes": sentence.total_likes,
-                "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence).exists()
-            }
-            for sentence in sentences
-        ],
-        status=status.HTTP_200_OK,
-    )
+
+    sentences: list[SentencePack] = await get_filter()
+
+    login_code = request.headers.get("X-Login-Code", None)
+    user = await login_code_to_user(login_code) if login_code else None
+
+    result = []
+    for sentence in sentences:
+        result.append({
+            "id": sentence.id,
+            "name": sentence.name,
+            "author": sentence.author.nickname if sentence.author else "Unknown",
+            "original_author": sentence.original_author,
+            "level": sentence.level,
+            "total_likes": sentence.total_likes,
+            "is_liked": await get_is_liked(user, sentence),
+        })
+    return Response(result, status=status.HTTP_200_OK)
 
 
 async def get_leaderboard_data(sentence_pack: SentencePack):
@@ -109,9 +124,7 @@ async def get_leaderboard_data(sentence_pack: SentencePack):
         )
     )
     all_leaderboards = await get_all_leaderboards()
-    top_5 = list(all_leaderboards[:5])
-
-    return top_5
+    return list(all_leaderboards[:5])
 
 
 @api_view(["GET"])
@@ -132,17 +145,18 @@ async def get_sentence_game(request: HttpRequest, sentence_id: int):
             {"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND
         )
 
+    login_code = request.headers.get("X-Login-Code", None)
+    user = await login_code_to_user(login_code) if login_code else None
+
     return Response(
         {
             "id": sentence_pack.id,
             "name": sentence_pack.name,
-            "author": (
-                sentence_pack.author.nickname if sentence_pack.author else "알 수 없음"
-            ),
+            "author": sentence_pack.author.nickname if sentence_pack.author else "알 수 없음",
             "original_author": sentence_pack.original_author,
             "sentences": sentence_pack.sentences.split("\r\n"),
             "total_likes": sentence_pack.total_likes,
-            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence_pack).exists()
+            "is_liked": await get_is_liked(user, sentence_pack),
         },
         status=status.HTTP_200_OK,
     )
@@ -152,19 +166,14 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
     get_leaderboard = sync_to_async(
         lambda: sentence_pack.leaderboards.filter(player=user).first()
     )
-
     get_all_ranks = sync_to_async(
         lambda: list(
-            sentence_pack.leaderboards.order_by("-score").values_list(
-                "score", flat=True
-            )
+            sentence_pack.leaderboards.order_by("-score").values_list("score", flat=True)
         )
     )
     get_top5_players = sync_to_async(
         lambda: list(
-            sentence_pack.leaderboards.order_by("-score").values_list(
-                "player_id", flat=True
-            )[:5]
+            sentence_pack.leaderboards.order_by("-score").values_list("player_id", flat=True)[:5]
         )
     )
 
@@ -191,14 +200,12 @@ async def get_user_rank_data(sentence_pack: SentencePack, user):
             )
         )
     )
-
     nearby_users = await get_nearby_users()
 
     def is_in_top5(nearby_user):
         return getattr(nearby_user, "player_id", None) in top5_player_ids
 
     nearby_user_1 = {"player": "없음", "score": 0, "rank": user_rank - 1}
-
     nearby_user_2 = {"player": "없음", "score": 0, "rank": user_rank + 1}
 
     if len(nearby_users) > 0 and nearby_users[0] and not is_in_top5(nearby_users[0]):
@@ -242,9 +249,7 @@ async def update_sentence_game_point(request: HttpRequest, sentence_pack_id: int
 
     try:
         get_sentence_pack = sync_to_async(
-            lambda: SentencePack.objects.select_related("author").get(
-                id=sentence_pack_id
-            )
+            lambda: SentencePack.objects.select_related("author").get(id=sentence_pack_id)
         )
         sentence_pack = await get_sentence_pack()
     except SentencePack.DoesNotExist:
@@ -272,6 +277,7 @@ async def update_sentence_game_point(request: HttpRequest, sentence_pack_id: int
         message = "기존 최고 점수보다 낮아 업데이트되지 않았습니다."
 
     return Response({"message": message}, status=status.HTTP_200_OK)
+
 
 @api_view(["GET"])
 async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
@@ -306,27 +312,22 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
         {
             "id": sentence_pack.id,
             "name": sentence_pack.name,
-            "author": (
-                sentence_pack.author.nickname if sentence_pack.author else "알 수 없음"
-            ),
+            "author": sentence_pack.author.nickname if sentence_pack.author else "알 수 없음",
             "original_author": sentence_pack.original_author,
             "leaderboard": [
                 {
-                    "player": (
-                        leaderboard.player.nickname
-                        if leaderboard.player
-                        else "알 수 없음"
-                    ),
-                    "score": leaderboard.score,
+                    "player": lb.player.nickname if lb.player else "알 수 없음",
+                    "score": lb.score,
                 }
-                for leaderboard in leaderboards
+                for lb in leaderboards
             ],
             **rank_data,
             "total_likes": sentence_pack.total_likes,
-            "is_liked": SentencePackLike.objects.filter(user=request.user, pack=sentence_pack).exists()
+            "is_liked": await get_is_liked(user, sentence_pack),
         },
         status=status.HTTP_200_OK,
     )
+
 
 @api_view(["POST"])
 async def interact_like_sentence_pack(request: HttpRequest, sentence_id: int):
