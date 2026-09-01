@@ -1,0 +1,136 @@
+- generic [active] [ref=f4e1]:
+  - link "Skip to main content" [ref=f4e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - generic [ref=f4e3]:
+    - banner [ref=f4e4]:
+      - link "Django administration" [ref=f4e7] [cursor=pointer]:
+        - /url: /admin/
+      - generic [ref=f4e8]:
+        - text: Welcome,
+        - strong [ref=f4e9]: admin
+        - text: .
+        - link "View site" [ref=f4e10] [cursor=pointer]:
+          - /url: /
+        - text: /
+        - link "Change password" [ref=f4e11] [cursor=pointer]:
+          - /url: /admin/password_change/
+        - text: /
+        - button "Log out" [ref=f4e13] [cursor=pointer]
+        - 'button "Toggle theme (current theme: auto)" [ref=f4e14] [cursor=pointer]'
+    - navigation "Breadcrumbs" [ref=f4e18]:
+      - generic [ref=f4e19]:
+        - link "Home" [ref=f4e20] [cursor=pointer]:
+          - /url: /admin/
+        - text: ›
+        - link "User" [ref=f4e21] [cursor=pointer]:
+          - /url: /admin/user/
+        - text: › Game users
+    - generic [ref=f4e22]:
+      - button "Toggle navigation" [ref=f4e23] [cursor=pointer]: «
+      - navigation "Sidebar" [ref=f4e24]:
+        - searchbox "Filter navigation items" [ref=f4e25]
+        - table [ref=f4e27]:
+          - caption [ref=f4e28]:
+            - link "Authentication and Authorization" [ref=f4e29] [cursor=pointer]:
+              - /url: /admin/auth/
+          - rowgroup [ref=f4e30]:
+            - row [ref=f4e31]:
+              - columnheader "Model name" [ref=f4e32]
+              - columnheader "Add link" [ref=f4e33]
+              - columnheader "Change or view list link" [ref=f4e34]
+          - rowgroup [ref=f4e35]:
+            - row [ref=f4e36]:
+              - rowheader [ref=f4e37]:
+                - link "Groups" [ref=f4e38] [cursor=pointer]:
+                  - /url: /admin/auth/group/
+              - cell [ref=f4e39]:
+                - link "Add" [ref=f4e40] [cursor=pointer]:
+                  - /url: /admin/auth/group/add/
+            - row [ref=f4e41]:
+              - rowheader [ref=f4e42]:
+                - link "Users" [ref=f4e43] [cursor=pointer]:
+                  - /url: /admin/auth/user/
+              - cell [ref=f4e44]:
+                - link "Add" [ref=f4e45] [cursor=pointer]:
+                  - /url: /admin/auth/user/add/
+        - table [ref=f4e47]:
+          - caption [ref=f4e48]:
+            - link "Sentence" [ref=f4e49] [cursor=pointer]:
+              - /url: /admin/sentence/
+          - rowgroup [ref=f4e50]:
+            - row [ref=f4e51]:
+              - columnheader "Model name" [ref=f4e52]
+              - columnheader "Add link" [ref=f4e53]
+              - columnheader "Change or view list link" [ref=f4e54]
+          - rowgroup [ref=f4e55]:
+            - row [ref=f4e56]:
+              - rowheader [ref=f4e57]:
+                - link "Sentence leaderboards" [ref=f4e58] [cursor=pointer]:
+                  - /url: /admin/sentence/sentenceleaderboard/
+              - cell [ref=f4e59]:
+                - link "Add" [ref=f4e60] [cursor=pointer]:
+                  - /url: /admin/sentence/sentenceleaderboard/add/
+            - row [ref=f4e61]:
+              - rowheader [ref=f4e62]:
+                - link "문장세트들" [ref=f4e63] [cursor=pointer]:
+                  - /url: /admin/sentence/sentencepack/
+              - cell [ref=f4e64]:
+                - link "Add" [ref=f4e65] [cursor=pointer]:
+                  - /url: /admin/sentence/sentencepack/add/
+        - table [ref=f4e67]:
+          - caption [ref=f4e68]:
+            - link "User" [ref=f4e69] [cursor=pointer]:
+              - /url: /admin/user/
+          - rowgroup [ref=f4e70]:
+            - row [ref=f4e71]:
+              - columnheader "Model name" [ref=f4e72]
+              - columnheader "Add link" [ref=f4e73]
+              - columnheader "Change or view list link" [ref=f4e74]
+          - rowgroup [ref=f4e75]:
+            - row [ref=f4e76]:
+              - rowheader [ref=f4e77]:
+                - link "Game users" [ref=f4e78] [cursor=pointer]:
+                  - /url: /admin/user/gameuser/
+              - cell [ref=f4e79]:
+                - link "Add" [ref=f4e80] [cursor=pointer]:
+                  - /url: /admin/user/gameuser/add/
+      - main [ref=f4e81]:
+        - generic [ref=f4e82]:
+          - heading "Select game user to change" [level=1] [ref=f4e83]
+          - generic [ref=f4e84]:
+            - list [ref=f4e85]:
+              - listitem [ref=f4e86]:
+                - link "Add game user" [ref=f4e87] [cursor=pointer]:
+                  - /url: /admin/user/gameuser/add/
+            - generic [ref=f4e90]:
+              - generic [ref=f4e91]:
+                - generic [ref=f4e92]:
+                  - text: "Action:"
+                  - combobox "Action:" [ref=f4e93]:
+                    - option "---------" [selected]
+                    - option "Delete selected game users"
+                - button "Go" [ref=f4e94] [cursor=pointer]
+                - text: 0 of 2 selected
+              - table [ref=f4e96]:
+                - rowgroup [ref=f4e97]:
+                  - row [ref=f4e98]:
+                    - columnheader [ref=f4e99]:
+                      - checkbox "Select all objects on this page for an action" [ref=f4e102]
+                    - columnheader [ref=f4e103]:
+                      - link "Game user" [ref=f4e105] [cursor=pointer]:
+                        - /url: "?o=1"
+                - rowgroup [ref=f4e106]:
+                  - row [ref=f4e107]:
+                    - cell [ref=f4e108]:
+                      - checkbox "Select this object for an action - GameUser(id=2, nickname=유찬, username=yuchanhan71)" [ref=f4e109]
+                    - rowheader [ref=f4e110]:
+                      - link "GameUser(id=2, nickname=유찬, username=yuchanhan71)" [ref=f4e111] [cursor=pointer]:
+                        - /url: /admin/user/gameuser/2/change/
+                  - row [ref=f4e112]:
+                    - cell [ref=f4e113]:
+                      - checkbox "Select this object for an action - GameUser(id=1, nickname=최장환, username=shamiu2311.8)" [ref=f4e114]
+                    - rowheader [ref=f4e115]:
+                      - link "GameUser(id=1, nickname=최장환, username=shamiu2311.8)" [ref=f4e116] [cursor=pointer]:
+                        - /url: /admin/user/gameuser/1/change/
+              - paragraph [ref=f4e117]: 2 game users
+    - contentinfo

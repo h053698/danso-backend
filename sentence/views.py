@@ -27,6 +27,8 @@ def _serialize_packs(sentences, user):
             "name": s.name,
             "author": s.author.nickname if s.author else "Unknown",
             "original_author": s.original_author,
+            "origin_author": s.original_author,  # Unity 호환
+            "image_url": s.image_url or "",
             "total_likes": s.total_likes,
             "is_liked": (
                 SentencePackLike.objects.filter(user=user, pack=s).exists()
@@ -140,6 +142,7 @@ async def create_sentence_pack(request: HttpRequest):
         sentences=sentences,
         level=level,
         original_author=original_author,
+        image_url=request.POST.get("image_url", None),
         author=user,
     )
     return Response({"id": pack.id, "name": pack.name}, status=status.HTTP_201_CREATED)
@@ -163,6 +166,7 @@ async def update_sentence_pack(request: HttpRequest, sentence_id: int):
     pack.name = request.POST.get("name", pack.name)
     pack.sentences = request.POST.get("sentences", pack.sentences)
     pack.original_author = request.POST.get("original_author", pack.original_author)
+    pack.image_url = request.POST.get("image_url", pack.image_url)
     level = request.POST.get("level", pack.level)
     if level not in ("A", "B", "C", "D", "E"):
         return Response({"error": "level은 A~E 중 하나여야 합니다."}, status=status.HTTP_400_BAD_REQUEST)
@@ -221,6 +225,8 @@ async def get_sentence_game(request: HttpRequest, sentence_id: int):
             "name": sentence_pack.name,
             "author": sentence_pack.author.nickname if sentence_pack.author else "알 수 없음",
             "original_author": sentence_pack.original_author,
+            "origin_author": sentence_pack.original_author,  # Unity 호환
+            "image_url": sentence_pack.image_url or "",
             "sentences": sentence_pack.sentences.split("\r\n"),
             "total_likes": sentence_pack.total_likes,
             "is_liked": (
@@ -359,6 +365,8 @@ async def get_sentence_by_id(request: HttpRequest, sentence_id: int):
             "name": sentence_pack.name,
             "author": sentence_pack.author.nickname if sentence_pack.author else "알 수 없음",
             "original_author": sentence_pack.original_author,
+            "origin_author": sentence_pack.original_author,  # Unity 호환
+            "image_url": sentence_pack.image_url or "",
             "leaderboard": [
                 {
                     "player": lb.player.nickname if lb.player else "알 수 없음",

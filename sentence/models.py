@@ -13,6 +13,7 @@ class SentencePack(models.Model):
         GameUser, on_delete=models.CASCADE, related_name="sentences"
     )
     sentences = models.TextField()
+    image_url = models.URLField(max_length=500, blank=True, null=True)  # 대표 이미지 URL
     LEVEL_CHOICES = [
         ("A", "상"),
         ("B", "중상"),

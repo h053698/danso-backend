@@ -1,0 +1,138 @@
+- generic [ref=f3e1]:
+  - link "Skip to main content" [ref=f3e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - generic [ref=f3e3]:
+    - banner [ref=f3e4]:
+      - link "Django administration" [ref=f3e7] [cursor=pointer]:
+        - /url: /admin/
+      - generic [ref=f3e8]:
+        - text: Welcome,
+        - strong [ref=f3e9]: admin
+        - text: .
+        - link "View site" [ref=f3e10] [cursor=pointer]:
+          - /url: /
+        - text: /
+        - link "Change password" [ref=f3e11] [cursor=pointer]:
+          - /url: /admin/password_change/
+        - text: /
+        - button "Log out" [ref=f3e13] [cursor=pointer]
+        - 'button "Toggle theme (current theme: auto)" [ref=f3e14] [cursor=pointer]'
+    - navigation "Breadcrumbs" [ref=f3e18]:
+      - generic [ref=f3e19]:
+        - link "Home" [ref=f3e20] [cursor=pointer]:
+          - /url: /admin/
+        - text: ›
+        - link "Sentence" [ref=f3e21] [cursor=pointer]:
+          - /url: /admin/sentence/
+        - text: ›
+        - link "문장세트들" [ref=f3e22] [cursor=pointer]:
+          - /url: /admin/sentence/sentencepack/
+        - text: › Add 문장세트
+    - generic [ref=f3e23]:
+      - button "Toggle navigation" [ref=f3e24] [cursor=pointer]: «
+      - navigation "Sidebar" [ref=f3e25]:
+        - searchbox "Filter navigation items" [ref=f3e26]
+        - table [ref=f3e28]:
+          - caption [ref=f3e29]:
+            - link "Authentication and Authorization" [ref=f3e30] [cursor=pointer]:
+              - /url: /admin/auth/
+          - rowgroup [ref=f3e31]:
+            - row [ref=f3e32]:
+              - columnheader "Model name" [ref=f3e33]
+              - columnheader "Add link" [ref=f3e34]
+              - columnheader "Change or view list link" [ref=f3e35]
+          - rowgroup [ref=f3e36]:
+            - row [ref=f3e37]:
+              - rowheader [ref=f3e38]:
+                - link "Groups" [ref=f3e39] [cursor=pointer]:
+                  - /url: /admin/auth/group/
+              - cell [ref=f3e40]:
+                - link "Add" [ref=f3e41] [cursor=pointer]:
+                  - /url: /admin/auth/group/add/
+            - row [ref=f3e42]:
+              - rowheader [ref=f3e43]:
+                - link "Users" [ref=f3e44] [cursor=pointer]:
+                  - /url: /admin/auth/user/
+              - cell [ref=f3e45]:
+                - link "Add" [ref=f3e46] [cursor=pointer]:
+                  - /url: /admin/auth/user/add/
+        - table [ref=f3e48]:
+          - caption [ref=f3e49]:
+            - link "Sentence" [ref=f3e50] [cursor=pointer]:
+              - /url: /admin/sentence/
+          - rowgroup [ref=f3e51]:
+            - row [ref=f3e52]:
+              - columnheader "Model name" [ref=f3e53]
+              - columnheader "Add link" [ref=f3e54]
+              - columnheader "Change or view list link" [ref=f3e55]
+          - rowgroup [ref=f3e56]:
+            - row [ref=f3e57]:
+              - rowheader [ref=f3e58]:
+                - link "Sentence leaderboards" [ref=f3e59] [cursor=pointer]:
+                  - /url: /admin/sentence/sentenceleaderboard/
+              - cell [ref=f3e60]:
+                - link "Add" [ref=f3e61] [cursor=pointer]:
+                  - /url: /admin/sentence/sentenceleaderboard/add/
+            - row [ref=f3e62]:
+              - rowheader [ref=f3e63]:
+                - link "문장세트들" [ref=f3e64] [cursor=pointer]:
+                  - /url: /admin/sentence/sentencepack/
+              - cell [ref=f3e65]:
+                - link "Add" [ref=f3e66] [cursor=pointer]:
+                  - /url: /admin/sentence/sentencepack/add/
+        - table [ref=f3e68]:
+          - caption [ref=f3e69]:
+            - link "User" [ref=f3e70] [cursor=pointer]:
+              - /url: /admin/user/
+          - rowgroup [ref=f3e71]:
+            - row [ref=f3e72]:
+              - columnheader "Model name" [ref=f3e73]
+              - columnheader "Add link" [ref=f3e74]
+              - columnheader "Change or view list link" [ref=f3e75]
+          - rowgroup [ref=f3e76]:
+            - row [ref=f3e77]:
+              - rowheader [ref=f3e78]:
+                - link "Game users" [ref=f3e79] [cursor=pointer]:
+                  - /url: /admin/user/gameuser/
+              - cell [ref=f3e80]:
+                - link "Add" [ref=f3e81] [cursor=pointer]:
+                  - /url: /admin/user/gameuser/add/
+      - main [ref=f3e82]:
+        - generic [ref=f3e83]:
+          - heading "Add 문장세트" [level=1] [ref=f3e84]
+          - generic [ref=f3e87]:
+            - group [ref=f3e88]:
+              - generic [ref=f3e91]:
+                - generic [ref=f3e92]: "Name:"
+                - textbox "Name:" [active] [ref=f3e93]
+              - generic [ref=f3e96]:
+                - generic [ref=f3e97]: "Original author:"
+                - textbox "Original author:" [ref=f3e98]
+              - generic [ref=f3e101]:
+                - generic [ref=f3e102]: "Author:"
+                - generic [ref=f3e103]:
+                  - combobox "Author:" [ref=f3e104]:
+                    - option "---------" [selected]
+                    - option "GameUser(id=1, nickname=최장환, username=shamiu2311.8)"
+                    - option "GameUser(id=2, nickname=유찬, username=yuchanhan71)"
+                  - generic "Change selected game user" [ref=f3e105]
+                  - link "Add another game user" [ref=f3e106] [cursor=pointer]:
+                    - /url: /admin/user/gameuser/add/?_to_field=id&_popup=1
+                  - generic "View selected game user" [ref=f3e107]
+              - generic [ref=f3e110]:
+                - generic [ref=f3e111]: "Sentences:"
+                - textbox "Sentences:" [ref=f3e112]
+              - generic [ref=f3e115]:
+                - generic [ref=f3e116]: "Level:"
+                - combobox "Level:" [ref=f3e117]:
+                  - option "---------" [selected]
+                  - option "상"
+                  - option "중상"
+                  - option "중"
+                  - option "중하"
+                  - option "하"
+            - generic [ref=f3e118]:
+              - button "Save" [ref=f3e119] [cursor=pointer]
+              - button "Save and add another" [ref=f3e120] [cursor=pointer]
+              - button "Save and continue editing" [ref=f3e121] [cursor=pointer]
+    - contentinfo
