@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "[::1]",
+    *env.list("ALLOWED_HOSTS", default=[]),
 ]
 
 # Application definition
