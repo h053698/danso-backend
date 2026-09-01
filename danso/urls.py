@@ -13,6 +13,7 @@ from sentence.views import (
     create_sentence_pack,
     update_sentence_pack,
     delete_sentence_pack,
+    upload_sentence_image,
 )
 from user.views import (
     login_oauth_url,
@@ -50,6 +51,7 @@ urlpatterns = [
     path("sentences/<int:sentence_id>/interact-like", interact_like_sentence_pack, name="sentence-interact-like"),
     path("sentences/<int:sentence_id>/update", update_sentence_pack, name="sentence-update"),
     path("sentences/<int:sentence_id>/delete", delete_sentence_pack, name="sentence-delete"),
+    path("sentences/<int:sentence_id>/upload-image", upload_sentence_image, name="sentence-upload-image"),
     path("login/oauth/", login_oauth_url, name="login-oauth-url"),
     path("login/callback", login_oauth_callback, name="login-oauth-callback"),
     path("login/result", login_view_render, name="login-result"),

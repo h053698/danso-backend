@@ -1,7 +1,10 @@
 from typing import Callable, Coroutine, Any
+import uuid
+import aiohttp
 
 from asgiref.sync import sync_to_async
 from django.http import HttpRequest
+from django.conf import settings
 from rest_framework import status
 from adrf.decorators import api_view
 from rest_framework.response import Response
@@ -411,3 +414,48 @@ async def interact_like_sentence_pack(request: HttpRequest, sentence_id: int):
         message = "문장 그룹의 좋아요를 취소했습니다."
 
     return Response({"message": message}, status=status.HTTP_200_OK)
+
+
+CDN_URL = "https://danso-image-cdn.serltretu24.workers.dev"
+
+
+@api_view(["POST"])
+async def upload_sentence_image(request: HttpRequest, sentence_id: int):
+    login_code = request.headers.get("X-Login-Code", None)
+    if not login_code:
+        return Response({"error": "로그인 코드가 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
+    user = await login_code_to_user(login_code)
+
+    try:
+        pack = await sync_to_async(SentencePack.objects.get)(id=sentence_id)
+    except SentencePack.DoesNotExist:
+        return Response({"error": "찾을 수 없는 문장 그룹입니다."}, status=status.HTTP_404_NOT_FOUND)
+
+    if pack.author_id != user.id:
+        return Response({"error": "업로드 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+
+    image_file = request.FILES.get("image")
+    if not image_file:
+        return Response({"error": "이미지 파일이 제공되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+    ext = image_file.name.rsplit(".", 1)[-1].lower() if "." in image_file.name else "jpg"
+    key = f"sentences/{sentence_id}/{uuid.uuid4().hex}.{ext}"
+    content_type = image_file.content_type or "image/jpeg"
+    image_data = image_file.read()
+
+    upload_secret = getattr(settings, "IMAGE_CDN_SECRET", "danso2026imagesecret")
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            f"{CDN_URL}/{key}",
+            data=image_data,
+            headers={"Content-Type": content_type, "X-Upload-Secret": upload_secret},
+        ) as resp:
+            if resp.status != 200:
+                return Response({"error": "이미지 업로드에 실패했습니다."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            result = await resp.json()
+
+    image_url = result.get("url", f"{CDN_URL}/{key}")
+    await sync_to_async(SentencePack.objects.filter(id=sentence_id).update)(image_url=image_url)
+
+    return Response({"image_url": image_url}, status=status.HTTP_200_OK)
