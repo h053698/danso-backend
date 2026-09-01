@@ -181,3 +181,12 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Agent artifacts
+.omo/
+.playwright-mcp/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp

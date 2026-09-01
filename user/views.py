@@ -106,10 +106,12 @@ async def user_logout(request: HttpRequest):
 
 
 def login_view_render(request: HttpRequest):
+    from django.conf import settings as dj_settings
     login_code = request.GET.get("login_code", None)
+    frontend_url = getattr(dj_settings, "FRONTEND_URL", "https://danso.bigbae.app")
     if not login_code:
-        return render(request, "error_login.html")
-    return render(request, "success_login.html", {"login_code": login_code})
+        return redirect(f"{frontend_url}/login?error=no_code")
+    return redirect(f"{frontend_url}/auth/callback?login_code={login_code}")
 
 
 def frontend_redirect(request: HttpRequest):
